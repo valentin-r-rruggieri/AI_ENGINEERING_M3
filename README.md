@@ -36,7 +36,7 @@ En Colab, si falta el paquete `openai`, los notebooks `E11` y `E12` intentan ins
 !pip install -U openai
 ```
 
-## Orden sugerido
+## Orden sugerido 
 
 | Orden | Ejercicio | Tema principal | Duración sugerida |
 |---|---|---|---|
