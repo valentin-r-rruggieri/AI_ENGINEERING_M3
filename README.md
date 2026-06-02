@@ -1,4 +1,4 @@
-# M3L1 Extras - AI Agents, Tools y ReAct
+# M3L1 - AI Agents, Tools y ReAct
 
 Esta carpeta contiene notebooks extra para practicar los conceptos centrales de agentes de IA en el módulo 3. Cada ejercicio es autocontenido: se puede abrir y resolver de forma independiente, sin depender de haber completado otro notebook.
 
