@@ -14,6 +14,7 @@ Bienvenido al **Módulo 3** de AI Engineering. Este repositorio contiene todos l
 |---|---|
 | 🤖 **M3L1** | Agentes de IA, Tools y Loop ReAct |
 | 🦜 **M3L2** | LangChain, LCEL, RAG y Embeddings |
+| 🧩 **M3L3** | Sistemas Multiagente, Orquestación, Handoff y Estado |
 
 ✨ **Todos los ejercicios son autocontenidos** — resuelve cada uno independientemente  
 🚀 **Compatible con Jupyter Notebook y Google Colab**
@@ -34,7 +35,7 @@ extras/
 │   ├── E12 → Sales: ReAct Trace
 │   └── E13 → Custom Tools Robustas
 │
-└── M3L2/
+├── M3L2/
     ├── E00 → Chat + PromptTemplate
     ├── E01 → LCEL Chains
     ├── E02 → Chat + Memory
@@ -52,6 +53,19 @@ extras/
     ├── E14 → Retriever
     ├── E15 → Refactor Code
     └── E16 → RAG desde Cero
+│
+└── M3L3/
+    ├── E00 → El problema del agente único
+    ├── E01 → Intent Classifier
+    ├── E02 → Agentes especialistas con RAG
+    ├── E03 → Orquestador básico
+    ├── E04 → Consulta mixta y delegación paralela
+    ├── E05 → Handoff con contexto
+    ├── E06 → Protocolos de output estructurado
+    ├── E10 → Support Bot Baseline
+    ├── E11 → Support Bot Multiagente
+    ├── E12 → Orquestador con OpenAI Functions
+    └── E13 → Sistema completo con estado
 ```
 
 ### 📖 Formato de cada Ejercicio
@@ -109,6 +123,13 @@ pip install faiss-cpu  # O faiss-gpu para GPU
 pip install python-dotenv
 ```
 
+**M3L3**
+```bash
+# Los notebooks actuales corren con Python estándar y mocks determinísticos.
+# Opcional, si quieres reemplazar los mocks por LangChain/OpenAI real:
+pip install langchain langchain-community langchain-openai faiss-cpu python-dotenv
+```
+
 ### 🌐 En Google Colab
 ```
 ✨ Las dependencias se instalan automáticamente
@@ -143,6 +164,7 @@ Cada carpeta de ejercicio contiene dos notebooks:
 - M3L1 E00: conexión a internet (DolarAPI)
 - M3L1 E11/E12: OpenAI API (opcional)
 - M3L2: LangChain, FAISS, embeddings
+- M3L3: Python estándar; LangChain/OpenAI opcional para llevar los mocks a producción
 
 En Google Colab, los notebooks instalan dependencias automáticamente.
 
@@ -644,6 +666,226 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 
 ---
 
+# 🧩 M3L3 - Sistemas Multiagente, Orquestación y Estado
+
+Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasificación de intención, agentes especialistas, orquestadores, handoffs, protocolos de salida y conversación con estado.
+
+> 🎯 **Objetivo**: Domina la coordinación de agentes especializados y diseña arquitecturas multiagente auditables
+
+## 🎯 Ejercicios M3L3
+
+| # | 📌 Ejercicio | 📖 Tema | ⏱️ Duración | 🎓 Nivel |
+|---|-----------|------|----------|---------|
+| 1 | **E00** | El problema del agente único | 25 min | 🟢 Básico |
+| 2 | **E01** | Intent classifier | 25 min | 🟢 Básico |
+| 3 | **E02** | Agentes especialistas con RAG | 30 min | 🟠 Intermedio |
+| 4 | **E03** | Orquestador básico | 30 min | 🟠 Intermedio |
+| 5 | **E04** | Consulta mixta y delegación paralela | 30 min | 🟠 Intermedio |
+| 6 | **E05** | Handoff con contexto | 30 min | 🟠 Intermedio |
+| 7 | **E06** | Protocolos de output estructurado | 30 min | 🟠 Intermedio |
+| 8 | **E10** | Support bot baseline | 35 min | 🟠 Intermedio |
+| 9 | **E11** | Support bot multiagente | 40 min | 🔴 Avanzado |
+| 10 | **E12** | Orquestador con OpenAI Functions | 35 min | 🔴 Avanzado |
+| 11 | **E13** | Sistema completo con estado | 45 min | 🔴 Avanzado |
+
+### E00 - El Problema del Agente Único
+
+**Carpeta**: `M3L3/E00_el_problema_del_agente_unico`
+
+**Objetivo**: Entender por qué un solo agente empieza a fallar cuando debe responder sobre múltiples dominios.
+
+**Qué aprenderás**:
+- Diferencia entre agente generalista y especialista
+- Concepto de dominio
+- Errores típicos por mezclar responsabilidades
+- Motivación para arquitectura multiagente
+
+**Notebooks**:
+- [M3L3_E00_Starter.ipynb](M3L3/E00_el_problema_del_agente_unico/M3L3_E00_Starter.ipynb)
+- [M3L3_E00_Resolution.ipynb](M3L3/E00_el_problema_del_agente_unico/M3L3_E00_Resolution.ipynb)
+
+---
+
+### E01 - Intent Classifier
+
+**Carpeta**: `M3L3/E01_intent_classifier`
+
+**Objetivo**: Clasificar la intención de una consulta para decidir a qué agente enviarla.
+
+**Qué aprenderás**:
+- Intents y routing
+- Salidas JSON estructuradas
+- Parsing y validación de outputs
+- Fallback a `unknown`
+
+**Notebooks**:
+- [M3L3_E01_Starter.ipynb](M3L3/E01_intent_classifier/M3L3_E01_Starter.ipynb)
+- [M3L3_E01_Resolution.ipynb](M3L3/E01_intent_classifier/M3L3_E01_Resolution.ipynb)
+
+---
+
+### E02 - Agentes Especialistas con RAG
+
+**Carpeta**: `M3L3/E02_agentes_especialistas_con_rag`
+
+**Objetivo**: Construir agentes especialistas, cada uno con su propio conocimiento por dominio.
+
+**Qué aprenderás**:
+- Separación de índices por dominio
+- Retrieval especializado
+- Encapsulación de agentes como funciones
+- Comparación entre índice correcto e incorrecto
+
+**Notebooks**:
+- [M3L3_E02_Starter.ipynb](M3L3/E02_agentes_especialistas_con_rag/M3L3_E02_Starter.ipynb)
+- [M3L3_E02_Resolution.ipynb](M3L3/E02_agentes_especialistas_con_rag/M3L3_E02_Resolution.ipynb)
+
+---
+
+### E03 - Orquestador Básico
+
+**Carpeta**: `M3L3/E03_orquestador_basico`
+
+**Objetivo**: Combinar clasificador, registro de agentes y función principal de ruteo.
+
+**Qué aprenderás**:
+- Responsabilidad del orquestador
+- Registro de agentes
+- Trace visible de decisiones
+- Flujo classify → route → execute
+
+**Notebooks**:
+- [M3L3_E03_Starter.ipynb](M3L3/E03_orquestador_basico/M3L3_E03_Starter.ipynb)
+- [M3L3_E03_Resolution.ipynb](M3L3/E03_orquestador_basico/M3L3_E03_Resolution.ipynb)
+
+---
+
+### E04 - Consulta Mixta y Delegación Paralela
+
+**Carpeta**: `M3L3/E04_consulta_mixta_delegacion_paralela`
+
+**Objetivo**: Detectar múltiples intenciones y delegar una misma consulta a varios agentes.
+
+**Qué aprenderás**:
+- Multi-intent classification
+- Delegación paralela conceptual
+- Merge de respuestas
+- Manejo de consultas mixtas
+
+**Notebooks**:
+- [M3L3_E04_Starter.ipynb](M3L3/E04_consulta_mixta_delegacion_paralela/M3L3_E04_Starter.ipynb)
+- [M3L3_E04_Resolution.ipynb](M3L3/E04_consulta_mixta_delegacion_paralela/M3L3_E04_Resolution.ipynb)
+
+---
+
+### E05 - Handoff con Contexto
+
+**Carpeta**: `M3L3/E05_handoff_con_contexto`
+
+**Objetivo**: Transferir una tarea de un agente a otro sin perder contexto.
+
+**Qué aprenderás**:
+- Handoff entre agentes
+- `TypedDict` como contrato
+- Payloads de transferencia
+- Buena UX sin repetir información
+
+**Notebooks**:
+- [M3L3_E05_Starter.ipynb](M3L3/E05_handoff_con_contexto/M3L3_E05_Starter.ipynb)
+- [M3L3_E05_Resolution.ipynb](M3L3/E05_handoff_con_contexto/M3L3_E05_Resolution.ipynb)
+
+---
+
+### E06 - Protocolos de Output Estructurado
+
+**Carpeta**: `M3L3/E06_protocolos_output_estructurado`
+
+**Objetivo**: Estandarizar la respuesta de todos los agentes con un contrato común.
+
+**Qué aprenderás**:
+- `AgentResponse`
+- Estados `success`, `needs_clarification` y `out_of_scope`
+- Orquestación basada en status
+- Respuestas auditables
+
+**Notebooks**:
+- [M3L3_E06_Starter.ipynb](M3L3/E06_protocolos_output_estructurado/M3L3_E06_Starter.ipynb)
+- [M3L3_E06_Resolution.ipynb](M3L3/E06_protocolos_output_estructurado/M3L3_E06_Resolution.ipynb)
+
+---
+
+### E10 - Support Bot Baseline
+
+**Carpeta**: `M3L3/E10_support_bot_baseline`
+
+**Objetivo**: Medir el punto de partida de un bot único antes del refactor multiagente.
+
+**Qué aprenderás**:
+- Baselines y benchmarks
+- Documentos mezclados
+- Métricas simples de accuracy
+- Patrones de error
+
+**Notebooks**:
+- [M3L3_E10_Starter.ipynb](M3L3/E10_support_bot_baseline/M3L3_E10_Starter.ipynb)
+- [M3L3_E10_Resolution.ipynb](M3L3/E10_support_bot_baseline/M3L3_E10_Resolution.ipynb)
+
+---
+
+### E11 - Support Bot Multiagente
+
+**Carpeta**: `M3L3/E11_support_bot_multi_agent`
+
+**Objetivo**: Refactorizar el baseline con agentes especialistas y comparar resultados.
+
+**Qué aprenderás**:
+- Arquitectura multiagente end-to-end
+- Reutilización de `AgentResponse`
+- Comparación E10 vs E11
+- Aha moment con benchmark fijo
+
+**Notebooks**:
+- [M3L3_E11_Starter.ipynb](M3L3/E11_support_bot_multi_agent/M3L3_E11_Starter.ipynb)
+- [M3L3_E11_Resolution.ipynb](M3L3/E11_support_bot_multi_agent/M3L3_E11_Resolution.ipynb)
+
+---
+
+### E12 - Orquestador con OpenAI Functions
+
+**Carpeta**: `M3L3/E12_orquestador_openai_functions`
+
+**Objetivo**: Entender cómo el LLM puede elegir agentes mediante function calling/tool use.
+
+**Qué aprenderás**:
+- Tools como agentes
+- Descripciones efectivas de tools
+- Tool choice
+- Routing manual vs function calling
+
+**Notebooks**:
+- [M3L3_E12_Starter.ipynb](M3L3/E12_orquestador_openai_functions/M3L3_E12_Starter.ipynb)
+- [M3L3_E12_Resolution.ipynb](M3L3/E12_orquestador_openai_functions/M3L3_E12_Resolution.ipynb)
+
+---
+
+### E13 - Sistema Completo con Estado
+
+**Carpeta**: `M3L3/E13_sistema_completo_con_estado`
+
+**Objetivo**: Integrar sesión, historial, guardrails, fallback y conversación multi-turno.
+
+**Qué aprenderás**:
+- `SessionState`
+- Estado conversacional
+- Guardrails y fallback
+- Sistema multiagente completo
+
+**Notebooks**:
+- [M3L3_E13_Starter.ipynb](M3L3/E13_sistema_completo_con_estado/M3L3_E13_Starter.ipynb)
+- [M3L3_E13_Resolution.ipynb](M3L3/E13_sistema_completo_con_estado/M3L3_E13_Resolution.ipynb)
+
+---
+
 ## 🗺️ Roadmap Completo del Módulo
 
 ```
@@ -686,6 +928,24 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 │  E03: Tools API                                                │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│              M3L3: Sistemas Multiagente                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  FUNDAMENTOS             ORQUESTACIÓN          SISTEMA FINAL     │
+│  ───────────             ─────────────         ─────────────     │
+│  E00: Agente único       E03: Router           E10: Baseline     │
+│  E01: Intent classifier  E04: Multi-intent     E11: Multi-agent  │
+│  E02: Specialists RAG    E05: Handoff          E12: Functions    │
+│                          E06: Protocolos       E13: Estado       │
+│                                                                 │
+│       ▼─────────────────▼─────────────────▼                    │
+│                                                                 │
+│  De un bot generalista a un sistema con agentes especialistas,  │
+│  contratos explícitos, handoff, tool choice y guardrails.       │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -710,6 +970,16 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - ✅ **Vector Stores**: FAISS y otros
 - ✅ **Retrievers**: Búsqueda y ranking
 - ✅ **Output Parsing**: Estructuración de outputs
+
+### 🧩 M3L3: Sistemas Multiagente
+- ✅ **Intent Classification**: Clasificación de intención para routing
+- ✅ **Specialist Agents**: Agentes por dominio con conocimiento separado
+- ✅ **Orchestration**: Clasificar, rutear, ejecutar y trazar decisiones
+- ✅ **Multi-intent Delegation**: Consultas mixtas y merge de respuestas
+- ✅ **Handoff**: Transferencia de contexto entre agentes
+- ✅ **AgentResponse**: Protocolos de salida estructurada
+- ✅ **Tool Choice**: Orquestación con function calling/tools
+- ✅ **Session State**: Estado, historial, guardrails y fallback
 
 ---
 
@@ -787,6 +1057,16 @@ pip install faiss-gpu
 - ✅ Output parsing
 - ✅ Retrievers personalizados
 
+### M3L3
+- ✅ Sistemas multiagente
+- ✅ Intent classification y routing
+- ✅ Agentes especialistas con RAG
+- ✅ Orquestadores y traces
+- ✅ Handoff con contexto
+- ✅ Output estructurado con `AgentResponse`
+- ✅ Function calling / tool choice
+- ✅ Estado conversacional y guardrails
+
 ---
 
 ## 💡 Tips para Maximizar el Aprendizaje
@@ -825,11 +1105,11 @@ pip install faiss-gpu
 
 | Métrica | Valor |
 |---------|-------|
-| **Ejercicios Totales** | 25 |
-| **Notebooks** | 50 (25 Starter + 25 Resolution) |
-| **Tiempo Total Estimado** | ~18-20 horas |
-| **Tópicos Cubiertos** | 20+ |
-| **Líneas de Código** | 5,000+ |
+| **Ejercicios Totales** | 36 |
+| **Notebooks** | 72 (36 Starter + 36 Resolution) |
+| **Tiempo Total Estimado** | ~24-28 horas |
+| **Tópicos Cubiertos** | 30+ |
+| **Líneas de Código** | 7,000+ |
 
 ---
 
@@ -862,6 +1142,6 @@ Construye agentes inteligentes y sistemas RAG increíbles.
 
 ---
 
-**Last Updated**: 2026-06-04  
-**Version**: 1.0  
+**Last Updated**: 2026-06-06  
+**Version**: 1.1  
 **Status**: ✅ Completo
