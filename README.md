@@ -1,4 +1,4 @@
-# 🤖 AI Engineering M3 - Agentes, LLMs y RAG
+﻿# 🤖 AI Engineering M3 - Agentes, LLMs y RAG
 
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange?style=for-the-badge&logo=jupyter)](https://jupyter.org/)
@@ -15,6 +15,7 @@ Bienvenido al **Módulo 3** de AI Engineering. Este repositorio contiene todos l
 | 🤖 **M3L1** | Agentes de IA, Tools y Loop ReAct |
 | 🦜 **M3L2** | LangChain, LCEL, RAG y Embeddings |
 | 🧩 **M3L3** | Sistemas Multiagente, Orquestación, Handoff y Estado |
+| 📊 **M3L4** | Tracing, Observabilidad y Producción |
 
 ✨ **Todos los ejercicios son autocontenidos** — resuelve cada uno independientemente  
 🚀 **Compatible con Jupyter Notebook y Google Colab**
@@ -66,6 +67,21 @@ extras/
     ├── E11 → Support Bot Multiagente
     ├── E12 → Orquestador con OpenAI Functions
     └── E13 → Sistema completo con estado
+│
+├── M3L4/
+    ├── E00 → Logs vs Tracing
+    ├── E01 → MiniTracer en Python
+    ├── E02 → Tracing multiagente mock
+    ├── E03 → Debugging con traces
+    ├── E04 → Golden Dataset para routing
+    ├── E05 → Router v1 vs v2
+    ├── E06 → Evaluator Agent simple
+    ├── E07 → Dashboard local de métricas
+    ├── E08 → LangGraph básico + Langfuse
+    ├── E09 → LangGraph router + Langfuse
+    ├── E10 → LangGraph supervisor + Langfuse
+    ├── E11 → Golden Dataset + Langfuse Scores
+    └── E12 → Ciclo de mejora iterativa
 ```
 
 ### 📖 Formato de cada Ejercicio
@@ -886,6 +902,266 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 
 ---
 
+# 📊 M3L4 - Tracing, Observabilidad y Producción
+
+Aprende a instrumentar, tracear y mejorar agentes en producción. Desde MiniTracer en Python puro hasta integración con Langfuse para observabilidad profesional.
+
+> 🎯 **Objetivo**: Domina la observabilidad de agentes: tracing, golden datasets, evaluadores, dashboards y ciclos de mejora iterativa
+
+## 🎯 Ejercicios M3L4
+
+| # | 📌 Ejercicio | 📖 Tema | ⏱️ Duración | 🎓 Nivel |
+|---|-----------|------|----------|---------|
+| 1 | **E00** | Logs tradicionales vs Tracing estructurado | 15 min | 🟢 Básico |
+| 2 | **E01** | MiniTracer en Python puro | 20 min | 🟢 Básico |
+| 3 | **E02** | Tracing de sistema multiagente mock | 20 min | 🟠 Intermedio |
+| 4 | **E03** | Debugging con traces | 25 min | 🟠 Intermedio |
+| 5 | **E04** | Golden Dataset para routing | 20 min | 🟠 Intermedio |
+| 6 | **E05** | Router v1 vs v2 | 20 min | 🟠 Intermedio |
+| 7 | **E06** | Evaluator Agent simple | 20 min | 🟠 Intermedio |
+| 8 | **E07** | Dashboard local de métricas | 20 min | 🟠 Intermedio |
+| 9 | **E08** | LangGraph básico + Langfuse | 25 min | 🟠 Intermedio |
+| 10 | **E09** | LangGraph router + Langfuse | 25 min | 🟠 Intermedio |
+| 11 | **E10** | LangGraph supervisor + Langfuse | 30 min | 🔴 Avanzado |
+| 12 | **E11** | Golden Dataset + Langfuse Scores | 30 min | 🔴 Avanzado |
+| 13 | **E12** | Ciclo completo de mejora iterativa | 30 min | 🔴 Avanzado |
+
+### E00 - Logs vs Tracing
+
+**Carpeta**: M3L4/E00_logs_vs_tracing
+
+**Objetivo**: Entender por qué los logs tradicionales no alcanzan para debuggear agentes y cómo el tracing estructurado resuelve esas limitaciones.
+
+**Qué aprenderás**:
+- Diferencias entre logs planos y traces estructurados
+- Jerarquía de spans con input, output y duración
+- Detección de misclassification con metadata
+- Por qué el tracing es esencial para agentes en producción
+
+**Notebooks**:
+- [M3L4_E00_Starter.ipynb](M3L4/E00_logs_vs_tracing/M3L4_E00_Starter.ipynb)
+- [M3L4_E00_Resolution.ipynb](M3L4/E00_logs_vs_tracing/M3L4_E00_Resolution.ipynb)
+
+---
+
+### E01 - MiniTracer en Python
+
+**Carpeta**: M3L4/E01_mini_tracer_python
+
+**Objetivo**: Construir una clase MiniTracer desde cero que automatiza la creación de traces, spans y cálculos de duración.
+
+**Qué aprenderás**:
+- Clase MiniTracer con start_trace, add_span, update_trace_output
+- Generación automática de trace_id y span_id con UUID
+- Cálculo automático de duración total
+- Fundamentos de cómo funcionan Langfuse y LangSmith por debajo
+
+**Notebooks**:
+- [M3L4_E01_Starter.ipynb](M3L4/E01_mini_tracer_python/M3L4_E01_Starter.ipynb)
+- [M3L4_E01_Resolution.ipynb](M3L4/E01_mini_tracer_python/M3L4_E01_Resolution.ipynb)
+
+---
+
+### E02 - Tracing Multiagente Mock
+
+**Carpeta**: M3L4/E02_tracing_multiagente_mock
+
+**Objetivo**: Integrar el MiniTracer dentro de un sistema multiagente real para tracear cada request automáticamente.
+
+**Qué aprenderás**:
+- Instrumentación de un sistema con tracing
+- Medición de duración real con time.time()
+- Metadata de entorno y versión del router
+- Traces automáticos para cada consulta
+
+**Notebooks**:
+- [M3L4_E02_Starter.ipynb](M3L4/E02_tracing_multiagente_mock/M3L4_E02_Starter.ipynb)
+- [M3L4_E02_Resolution.ipynb](M3L4/E02_tracing_multiagente_mock/M3L4_E02_Resolution.ipynb)
+
+---
+
+### E03 - Debugging con Traces
+
+**Carpeta**: M3L4/E03_debugging_con_traces
+
+**Objetivo**: Aprender a diagnosticar problemas comunes en agentes usando traces: misclassification, retrieval vacío, latencia alta, loops y errores silenciosos.
+
+**Qué aprenderás**:
+- Firmas de cada problema en la estructura del trace
+- Función diagnose_trace con reglas de detección
+- Suggested fixes para cada tipo de problema
+- Debugging sistemático de agentes
+
+**Notebooks**:
+- [M3L4_E03_Starter.ipynb](M3L4/E03_debugging_con_traces/M3L4_E03_Starter.ipynb)
+- [M3L4_E03_Resolution.ipynb](M3L4/E03_debugging_con_traces/M3L4_E03_Resolution.ipynb)
+
+---
+
+### E04 - Golden Dataset para Routing
+
+**Carpeta**: M3L4/E04_golden_dataset_routing
+
+**Objetivo**: Crear un conjunto de casos etiquetados manualmente para medir objetivamente la precisión del routing.
+
+**Qué aprenderás**:
+- Concepto de golden dataset y ground truth
+- Evaluación de routing accuracy
+- Análisis de fallos por dominio
+- Precisión por intent
+
+**Notebooks**:
+- [M3L4_E04_Starter.ipynb](M3L4/E04_golden_dataset_routing/M3L4_E04_Starter.ipynb)
+- [M3L4_E04_Resolution.ipynb](M3L4/E04_golden_dataset_routing/M3L4_E04_Resolution.ipynb)
+
+---
+
+### E05 - Router v1 vs v2
+
+**Carpeta**: M3L4/E05_router_v1_vs_v2
+
+**Objetivo**: Comparar dos versiones del router contra el mismo golden dataset para decidir cuál es mejor.
+
+**Qué aprenderás**:
+- A/B testing de routers
+- Keywords expandidas vs básicas
+- Detección de multi_intent y clarification
+- Mejora cuantificable con datos
+
+**Notebooks**:
+- [M3L4_E05_Starter.ipynb](M3L4/E05_router_v1_vs_v2/M3L4_E05_Starter.ipynb)
+- [M3L4_E05_Resolution.ipynb](M3L4/E05_router_v1_vs_v2/M3L4_E05_Resolution.ipynb)
+
+---
+
+### E06 - Evaluator Agent Simple
+
+**Carpeta**: M3L4/E06_evaluator_agent_simple
+
+**Objetivo**: Construir un evaluador que califica la calidad de las respuestas del agente según keywords esperadas.
+
+**Qué aprenderás**:
+- Evaluación de calidad de respuestas
+- Keyword matching para scoring
+- Limitaciones del enfoque basado en keywords
+- Preparación para LLM-as-judge
+
+**Notebooks**:
+- [M3L4_E06_Starter.ipynb](M3L4/E06_evaluator_agent_simple/M3L4_E06_Starter.ipynb)
+- [M3L4_E06_Resolution.ipynb](M3L4/E06_evaluator_agent_simple/M3L4_E06_Resolution.ipynb)
+
+---
+
+### E07 - Dashboard Local de Métricas
+
+**Carpeta**: M3L4/E07_dashboard_metricas_local
+
+**Objetivo**: Consolidar todas las métricas del sistema en un dashboard con pandas: accuracy, latencia, P95, calidad y detección de anomalías.
+
+**Qué aprenderás**:
+- Métricas globales del sistema
+- P95 latency y su importancia
+- Precisión y latencia por dominio
+- Detección de casos anómalos
+
+**Notebooks**:
+- [M3L4_E07_Starter.ipynb](M3L4/E07_dashboard_metricas_local/M3L4_E07_Starter.ipynb)
+- [M3L4_E07_Resolution.ipynb](M3L4/E07_dashboard_metricas_local/M3L4_E07_Resolution.ipynb)
+
+---
+
+### E08 - LangGraph Básico + Langfuse
+
+**Carpeta**: M3L4/E08_langgraph_basico_langfuse
+
+**Objetivo**: Integrar LangGraph con Langfuse mediante CallbackHandler para tracing automático.
+
+**Qué aprenderás**:
+- StateGraph básico con un nodo
+- CallbackHandler de Langfuse
+- Traces automáticos en cloud.langfuse.com
+- Diferencias con MiniTracer manual
+
+**Notebooks**:
+- [M3L4_E08_Starter.ipynb](M3L4/E08_langgraph_basico_langfuse/M3L4_E08_Starter.ipynb)
+- [M3L4_E08_Resolution.ipynb](M3L4/E08_langgraph_basico_langfuse/M3L4_E08_Resolution.ipynb)
+
+---
+
+### E09 - LangGraph Router + Langfuse
+
+**Carpeta**: M3L4/E09_langgraph_router_langfuse
+
+**Objetivo**: Construir un grafo con routing condicional y tracear la ruta elegida en Langfuse.
+
+**Qué aprenderás**:
+- Conditional edges en LangGraph
+- Router node + specialist nodes
+- Tags y metadata en traces de Langfuse
+- Visualización de la ruta ejecutada
+
+**Notebooks**:
+- [M3L4_E09_Starter.ipynb](M3L4/E09_langgraph_router_langfuse/M3L4_E09_Starter.ipynb)
+- [M3L4_E09_Resolution.ipynb](M3L4/E09_langgraph_router_langfuse/M3L4_E09_Resolution.ipynb)
+
+---
+
+### E10 - LangGraph Supervisor + Langfuse
+
+**Carpeta**: M3L4/E10_langgraph_multiagente_supervisor_langfuse
+
+**Objetivo**: Agregar un supervisor que controla el flujo entre agentes, registra agentes visitados y previene loops.
+
+**Qué aprenderás**:
+- Supervisor node separado del router
+- visited_agents para prevención de loops
+- Handoff controlado entre agentes
+- Estado compartido con TypedDict
+
+**Notebooks**:
+- [M3L4_E10_Starter.ipynb](M3L4/E10_langgraph_multiagente_supervisor_langfuse/M3L4_E10_Starter.ipynb)
+- [M3L4_E10_Resolution.ipynb](M3L4/E10_langgraph_multiagente_supervisor_langfuse/M3L4_E10_Resolution.ipynb)
+
+---
+
+### E11 - Golden Dataset + Langfuse Scores
+
+**Carpeta**: M3L4/E11_langgraph_golden_dataset_scores
+
+**Objetivo**: Ejecutar el golden dataset contra LangGraph y registrar scores automáticos en Langfuse.
+
+**Qué aprenderás**:
+- Integración de golden dataset con LangGraph
+- langfuse.create_score() para cada caso
+- Trazabilidad completa por caso de prueba
+- Dashboard de accuracy en Langfuse
+
+**Notebooks**:
+- [M3L4_E11_Starter.ipynb](M3L4/E11_langgraph_golden_dataset_scores/M3L4_E11_Starter.ipynb)
+- [M3L4_E11_Resolution.ipynb](M3L4/E11_langgraph_golden_dataset_scores/M3L4_E11_Resolution.ipynb)
+
+---
+
+### E12 - Ciclo de Mejora Iterativa
+
+**Carpeta**: M3L4/E12_ciclo_mejora_iterativa
+
+**Objetivo**: Completar el ciclo completo: medir, diagnosticar, fixear, re-medir y documentar con un fix report.
+
+**Qué aprenderás**:
+- Ciclo completo Medir-Diagnosticar-Fixear-Re-medir-Documentar
+- Fix report con causa raíz, cambio y métricas
+- Before/After con golden dataset
+- Ingeniería de IA basada en datos
+
+**Notebooks**:
+- [M3L4_E12_Starter.ipynb](M3L4/E12_ciclo_mejora_iterativa/M3L4_E12_Starter.ipynb)
+- [M3L4_E12_Resolution.ipynb](M3L4/E12_ciclo_mejora_iterativa/M3L4_E12_Resolution.ipynb)
+
+---
+
+---
+
 ## 🗺️ Roadmap Completo del Módulo
 
 ```
@@ -944,7 +1220,25 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 │                                                                 │
 │  De un bot generalista a un sistema con agentes especialistas,  │
 │  contratos explícitos, handoff, tool choice y guardrails.       │
+
+┌─────────────────────────────────────────────────────────────────┐
+│              M3L4: Tracing, Observabilidad y Producción          │
+├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
+│  FUNDAMENTOS              MÉTRICAS              PRODUCCIÓN       │
+│  ───────────              ─────────             ──────────       │
+│  E00: Logs vs Tracing     E04: Golden Dataset   E08: LangGraph   │
+│  E01: MiniTracer          E05: Router v1 vs v2  E09: Router LG   │
+│  E02: Tracing multiagente E06: Evaluator Agent  E10: Supervisor  │
+│  E03: Debugging           E07: Dashboard        E11: Scores LG   │
+│                                                 E12: Mejora      │
+│                                                                  │
+│       ▼─────────────────▼─────────────────▼                     │
+│                                                                  │
+│  De logs planos a trazabilidad completa con Langfuse,            │
+│  golden datasets y mejora continua basada en datos.              │
+│                                                                   │
+└─────────────────────────────────────────────────────────────────┘│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -980,6 +1274,18 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 - ✅ **AgentResponse**: Protocolos de salida estructurada
 - ✅ **Tool Choice**: Orquestación con function calling/tools
 - ✅ **Session State**: Estado, historial, guardrails y fallback
+
+### 📊 M3L4: Tracing y Observabilidad
+- ✅ **Logs vs Traces**: Por qué los logs no alcanzan para agentes
+- ✅ **MiniTracer**: Implementación de tracing desde cero
+- ✅ **Debugging con Traces**: Diagnóstico de misclassification, loops, latencia
+- ✅ **Golden Dataset**: Evaluación objetiva con casos etiquetados
+- ✅ **Router A/B Testing**: Comparación de versiones con datos
+- ✅ **Evaluator Agent**: Scoring de calidad de respuestas
+- ✅ **Dashboard de Métricas**: Accuracy, P95 latency, calidad por dominio
+- ✅ **LangGraph + Langfuse**: Tracing automático en producción
+- ✅ **Langfuse Scores**: Calificación automática por trace
+- ✅ **Ciclo de Mejora Iterativa**: Medir, diagnosticar, fixear, documentar
 
 ---
 
@@ -1105,11 +1411,11 @@ pip install faiss-gpu
 
 | Métrica | Valor |
 |---------|-------|
-| **Ejercicios Totales** | 36 |
-| **Notebooks** | 72 (36 Starter + 36 Resolution) |
-| **Tiempo Total Estimado** | ~24-28 horas |
-| **Tópicos Cubiertos** | 30+ |
-| **Líneas de Código** | 7,000+ |
+| **Ejercicios Totales** | 49 |
+| **Notebooks** | 98 (49 Starter + 49 Resolution) |
+| **Tiempo Total Estimado** | ~32-38 horas |
+| **Tópicos Cubiertos** | 40+ |
+| **Líneas de Código** | 9,000+ |
 
 ---
 
@@ -1143,5 +1449,5 @@ Construye agentes inteligentes y sistemas RAG increíbles.
 ---
 
 **Last Updated**: 2026-06-06  
-**Version**: 1.1  
+**Version**: 1.2  
 **Status**: ✅ Completo

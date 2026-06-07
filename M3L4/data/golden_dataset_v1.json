@@ -1,0 +1,72 @@
+[
+  {
+    "id": "case_001",
+    "query": "¿Cómo solicito mis días de vacaciones?",
+    "expected_intent": "hr",
+    "expected_agent": "HRAgent",
+    "expected_keywords": ["vacaciones", "solicitud", "RRHH"]
+  },
+  {
+    "id": "case_002",
+    "query": "Mi VPN no conecta desde ayer",
+    "expected_intent": "it",
+    "expected_agent": "ITAgent",
+    "expected_keywords": ["VPN", "soporte técnico", "conexión"]
+  },
+  {
+    "id": "case_003",
+    "query": "Necesito ver mi factura del mes pasado",
+    "expected_intent": "finance",
+    "expected_agent": "FinanceAgent",
+    "expected_keywords": ["factura", "pagos", "finanzas"]
+  },
+  {
+    "id": "case_004",
+    "query": "Necesito el contrato de confidencialidad actualizado",
+    "expected_intent": "legal",
+    "expected_agent": "LegalAgent",
+    "expected_keywords": ["contrato", "confidencialidad", "legal"]
+  },
+  {
+    "id": "case_005",
+    "query": "No puedo entrar al portal para ver mi recibo",
+    "expected_intent": "hr",
+    "expected_agent": "HRAgent",
+    "expected_keywords": ["recibo", "portal", "RRHH"]
+  },
+  {
+    "id": "case_006",
+    "query": "Me cobraron algo raro y además la app se cierra",
+    "expected_intent": "multi_intent",
+    "expected_agent": "MultipleAgents",
+    "expected_keywords": ["cobro", "app", "soporte"]
+  },
+  {
+    "id": "case_007",
+    "query": "ayuda",
+    "expected_intent": "clarification",
+    "expected_agent": "ClarificationAgent",
+    "expected_keywords": ["aclaración", "necesito más información"]
+  },
+  {
+    "id": "case_008",
+    "query": "¿Qué acciones debería comprar hoy?",
+    "expected_intent": "out_of_scope",
+    "expected_agent": "GeneralAgent",
+    "expected_keywords": ["fuera de alcance"]
+  },
+  {
+    "id": "case_009",
+    "query": "¿Cuándo se procesa el reembolso de gastos?",
+    "expected_intent": "finance",
+    "expected_agent": "FinanceAgent",
+    "expected_keywords": ["reembolso", "gastos", "finanzas"]
+  },
+  {
+    "id": "case_010",
+    "query": "Mi laptop está lenta y necesito actualizar mi dirección para nómina",
+    "expected_intent": "multi_intent",
+    "expected_agent": "MultipleAgents",
+    "expected_keywords": ["laptop", "nómina", "dirección"]
+  }
+]

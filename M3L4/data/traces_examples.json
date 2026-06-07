@@ -1,0 +1,135 @@
+[
+  {
+    "trace_id": "trace-001",
+    "trace_name": "support-request",
+    "input": {"query": "No puedo ver mi factura"},
+    "output": {"final_response": "Podés ver tu factura desde el portal de pagos en finanzas.empresa.com"},
+    "metadata": {"environment": "production", "user_id": "u-42", "session_id": "sess-101"},
+    "tags": ["finance", "resolved"],
+    "spans": [
+      {
+        "span_id": "span-001-a",
+        "name": "orchestrator-routing",
+        "input": {"query": "No puedo ver mi factura"},
+        "output": {"intent": "finance"},
+        "duration_ms": 120
+      },
+      {
+        "span_id": "span-001-b",
+        "name": "finance-agent",
+        "input": {"query": "No puedo ver mi factura"},
+        "output": {"response": "Podés ver tu factura desde el portal de pagos en finanzas.empresa.com"},
+        "duration_ms": 860
+      }
+    ]
+  },
+  {
+    "trace_id": "trace-002",
+    "trace_name": "support-request",
+    "input": {"query": "No puedo ver mi factura"},
+    "output": {"final_response": "Probá reiniciar la app."},
+    "metadata": {
+      "environment": "production",
+      "user_id": "u-55",
+      "session_id": "sess-102",
+      "expected_intent": "finance",
+      "actual_intent": "it"
+    },
+    "tags": ["misclassification", "it", "bug"],
+    "spans": [
+      {
+        "span_id": "span-002-a",
+        "name": "orchestrator-routing",
+        "input": {"query": "No puedo ver mi factura"},
+        "output": {"intent": "it"},
+        "duration_ms": 140
+      },
+      {
+        "span_id": "span-002-b",
+        "name": "it-agent",
+        "input": {"query": "No puedo ver mi factura"},
+        "output": {"response": "Probá reiniciar la app."},
+        "duration_ms": 900
+      }
+    ]
+  },
+  {
+    "trace_id": "trace-003",
+    "trace_name": "support-request",
+    "input": {"query": "¿Cómo solicito mis vacaciones?"},
+    "output": {"final_response": "Para solicitar vacaciones ingresá al portal de RRHH y completá el formulario de solicitud."},
+    "metadata": {"environment": "production", "user_id": "u-77", "session_id": "sess-103"},
+    "tags": ["hr", "resolved"],
+    "spans": [
+      {
+        "span_id": "span-003-a",
+        "name": "orchestrator-routing",
+        "input": {"query": "¿Cómo solicito mis vacaciones?"},
+        "output": {"intent": "hr"},
+        "duration_ms": 95
+      },
+      {
+        "span_id": "span-003-b",
+        "name": "hr-agent",
+        "input": {"query": "¿Cómo solicito mis vacaciones?"},
+        "output": {"response": "Para solicitar vacaciones ingresá al portal de RRHH y completá el formulario de solicitud."},
+        "duration_ms": 4200
+      }
+    ]
+  },
+  {
+    "trace_id": "trace-004",
+    "trace_name": "support-request",
+    "input": {"query": "ayuda"},
+    "output": {"final_response": "¿En qué área necesitás ayuda? (RRHH, IT, Finanzas, Legal)"},
+    "metadata": {"environment": "production", "user_id": "u-12", "session_id": "sess-104"},
+    "tags": ["clarification"],
+    "spans": [
+      {
+        "span_id": "span-004-a",
+        "name": "orchestrator-routing",
+        "input": {"query": "ayuda"},
+        "output": {"intent": "clarification"},
+        "duration_ms": 80
+      },
+      {
+        "span_id": "span-004-b",
+        "name": "clarification-agent",
+        "input": {"query": "ayuda"},
+        "output": {"response": "¿En qué área necesitás ayuda? (RRHH, IT, Finanzas, Legal)"},
+        "duration_ms": 50
+      }
+    ]
+  },
+  {
+    "trace_id": "trace-005",
+    "trace_name": "support-request",
+    "input": {"query": "Mi laptop está lenta y necesito actualizar mi dirección para nómina"},
+    "output": {"final_response": "Tu consulta involucra IT y RRHH. Escalando a ambos equipos."},
+    "metadata": {"environment": "production", "user_id": "u-88", "session_id": "sess-105"},
+    "tags": ["multi_intent", "it", "hr"],
+    "spans": [
+      {
+        "span_id": "span-005-a",
+        "name": "orchestrator-routing",
+        "input": {"query": "Mi laptop está lenta y necesito actualizar mi dirección para nómina"},
+        "output": {"intent": "multi_intent", "detected": ["it", "hr"]},
+        "duration_ms": 160
+      },
+      {
+        "span_id": "span-005-b",
+        "name": "it-agent",
+        "input": {"query": "laptop lenta"},
+        "output": {"response": "Para laptops lentas, revisá uso de disco y RAM. Abrí un ticket si persiste."},
+        "duration_ms": 720
+      },
+      {
+        "span_id": "span-005-c",
+        "name": "hr-agent",
+        "input": {"query": "actualizar dirección para nómina"},
+        "output": {"response": "Para actualizar tu dirección ingresá al portal de RRHH > Mi Perfil > Datos Personales."},
+        "duration_ms": 680
+      }
+    ]
+  }
+]
