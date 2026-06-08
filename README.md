@@ -1386,26 +1386,6 @@ pip install faiss-gpu
 
 ---
 
-## 🆘 Troubleshooting
-
-### En Colab
-- Algunos paquetes se instalan automáticamente
-- Si algo falla, ejecuta: `!pip install --upgrade langchain openai faiss-cpu`
-
-### Errores comunes
-- **ImportError**: Instala el paquete faltante
-- **API keys**: Usa `getpass` para inputs seguros
-- **Timeout en API**: Intenta de nuevo, algunos endpoints pueden estar lentos
-
----
-
-## 📧 Contacto & Feedback
-
-¿Encontraste un bug? ¿Sugerencias de mejora?
-
-📬 Reporta en el repositorio o contacta al instructor.
-
----
 
 ## 📊 Estadísticas del Módulo
 
@@ -1417,37 +1397,6 @@ pip install faiss-gpu
 | **Tópicos Cubiertos** | 40+ |
 | **Líneas de Código** | 9,000+ |
 
----
 
-## 🙋 ¿Necesitas Ayuda?
 
-```
-📖 Documentación: Revisa el README de cada ejercicio
-💬 Discusiones: Abre un issue con tu pregunta
-🐛 Bugs: Reporta en el repositorio
-💡 Mejoras: Sugerencias siempre bienvenidas
-```
 
----
-
-## 📄 Licencia
-
-Este proyecto está bajo licencia **MIT**. Úsalo libremente para aprender y enseñar.
-
----
-
-<div align="center">
-
-### 🌟 ¡Happy Learning! 🌟
-
-Construye agentes inteligentes y sistemas RAG increíbles.
-
-**Made with ❤️ for AI Engineers**
-
-</div>
-
----
-
-**Last Updated**: 2026-06-06  
-**Version**: 1.2  
-**Status**: ✅ Completo
