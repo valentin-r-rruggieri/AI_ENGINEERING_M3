@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Cuantos dias de vacaciones tengo si llevo 3 anos en la empresa?",
+    "expected_intent": "hr"
+  },
+  {
+    "query": "No puedo conectarme a la VPN desde mi notebook",
+    "expected_intent": "tech"
+  },
+  {
+    "query": "Cuando se procesa el reembolso de una factura aprobada?",
+    "expected_intent": "finance"
+  },
+  {
+    "query": "Necesito cambiar mi contrasena del correo corporativo",
+    "expected_intent": "tech"
+  },
+  {
+    "query": "Como se calcula el bono anual de desempeno?",
+    "expected_intent": "hr"
+  },
+  {
+    "query": "Que documentacion necesito para cargar un gasto de viaje?",
+    "expected_intent": "finance"
+  },
+  {
+    "query": "Tengo problemas con el doble factor de autenticacion",
+    "expected_intent": "tech"
+  },
+  {
+    "query": "Cuando pagan los reintegros?",
+    "expected_intent": "finance"
+  },
+  {
+    "query": "Puedo tomar licencia por estudio?",
+    "expected_intent": "hr"
+  },
+  {
+    "query": "Cual es la capital de Francia?",
+    "expected_intent": "unknown"
+  },
+  {
+    "query": "Tengo un problema con la VPN y ademas quiero pedir vacaciones",
+    "expected_intent": "unknown"
+  },
+  {
+    "query": "Me rechazaron un gasto y no se si hablar con finanzas o soporte",
+    "expected_intent": "unknown"
+  }
+]

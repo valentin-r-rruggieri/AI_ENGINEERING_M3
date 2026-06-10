@@ -1,0 +1,16 @@
+langchain
+langchain-openai
+langchain-community
+langchain-text-splitters
+langgraph
+langfuse
+openai
+faiss-cpu
+tiktoken
+python-dotenv
+pydantic
+jupyter
+ipykernel
+pypdf
+rich
+pytest
