@@ -6,11 +6,12 @@ from src.config import get_settings
 
 
 TRACE_NAME = "pim3-multiagent-rag"
+_LANGFUSE_CLIENT: Any | None = None
 
 
 def get_langfuse_callback() -> Any | None:
-    settings = get_settings()
-    if not settings.has_langfuse:
+    client = get_langfuse_client()
+    if client is None:
         return None
 
     try:
@@ -18,14 +19,30 @@ def get_langfuse_callback() -> Any | None:
     except ImportError:
         return None
 
+    settings = get_settings()
+    return CallbackHandler(public_key=settings.langfuse_public_key)
+
+
+def get_langfuse_client() -> Any | None:
+    global _LANGFUSE_CLIENT
+    if _LANGFUSE_CLIENT is not None:
+        return _LANGFUSE_CLIENT
+
+    settings = get_settings()
+    if not settings.has_langfuse:
+        return None
+
     try:
-        return CallbackHandler(public_key=settings.langfuse_public_key)
-    except TypeError:
-        return CallbackHandler(
-            public_key=settings.langfuse_public_key,
-            secret_key=settings.langfuse_secret_key,
-            host=settings.langfuse_host,
-        )
+        from langfuse import Langfuse
+    except ImportError:
+        return None
+
+    _LANGFUSE_CLIENT = Langfuse(
+        public_key=settings.langfuse_public_key,
+        secret_key=settings.langfuse_secret_key,
+        base_url=settings.langfuse_base_url,
+    )
+    return _LANGFUSE_CLIENT
 
 
 def graph_config() -> dict[str, Any]:
@@ -39,21 +56,7 @@ def graph_config() -> dict[str, Any]:
     }
 
 
-def score_current_trace(scores: dict[str, float], comment: str) -> None:
-    settings = get_settings()
-    if not settings.has_langfuse:
-        return
-
-    try:
-        from langfuse import Langfuse
-
-        client = Langfuse(
-            public_key=settings.langfuse_public_key,
-            secret_key=settings.langfuse_secret_key,
-            host=settings.langfuse_host,
-        )
-        for name, value in scores.items():
-            client.score_current_trace(name=name, value=value, comment=comment)
-    except Exception:
-        # Langfuse no debe romper la demo del PI si falta contexto de trace.
-        return
+def flush_langfuse() -> None:
+    client = get_langfuse_client()
+    if client is not None:
+        client.flush()

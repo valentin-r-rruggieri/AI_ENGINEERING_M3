@@ -10,7 +10,6 @@ from src.agents import (
     tech_agent_node,
     unknown_node,
 )
-from src.evaluator import evaluator_node
 
 
 def next_node(state: AgentState) -> str:
@@ -28,7 +27,6 @@ def build_graph():
     graph.add_node("tech", tech_agent_node)
     graph.add_node("finance", finance_agent_node)
     graph.add_node("unknown", unknown_node)
-    graph.add_node("evaluator", evaluator_node)
 
     graph.add_edge(START, "orchestrator")
     graph.add_conditional_edges(
@@ -41,11 +39,10 @@ def build_graph():
             "unknown": "unknown",
         },
     )
-    graph.add_edge("hr", "evaluator")
-    graph.add_edge("tech", "evaluator")
-    graph.add_edge("finance", "evaluator")
+    graph.add_edge("hr", END)
+    graph.add_edge("tech", END)
+    graph.add_edge("finance", END)
     graph.add_edge("unknown", END)
-    graph.add_edge("evaluator", END)
 
     return graph.compile()
 
@@ -58,5 +55,4 @@ def initial_state(query: str) -> AgentState:
         "context": "",
         "sources": [],
         "answer": "",
-        "evaluation": {},
     }

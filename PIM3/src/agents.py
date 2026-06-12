@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unicodedata
 from typing import Any, Literal, TypedDict
 
 from pydantic import BaseModel, Field
@@ -18,7 +19,6 @@ class AgentState(TypedDict):
     context: str
     sources: list[dict[str, Any]]
     answer: str
-    evaluation: dict[str, Any]
 
 
 class RouteDecision(BaseModel):
@@ -27,14 +27,60 @@ class RouteDecision(BaseModel):
 
 
 KEYWORDS = {
-    "hr": ["vacacion", "licencia", "beneficio", "bono", "desempeno", "onboarding", "estudio"],
-    "tech": ["vpn", "2fa", "doble factor", "contrasena", "correo", "notebook", "soporte", "acceso"],
-    "finance": ["factura", "pago", "reembolso", "reintegro", "gasto", "viaje", "finanzas", "metodo"],
+    "hr": [
+        "vacacion",
+        "vacaciones",
+        "licencia",
+        "beneficio",
+        "bono",
+        "desempeno",
+        "rrhh",
+        "recursos humanos",
+        "onboarding",
+        "estudio",
+    ],
+    "tech": [
+        "vpn",
+        "2fa",
+        "doble factor",
+        "contrasena",
+        "password",
+        "correo",
+        "notebook",
+        "soporte",
+        "acceso",
+    ],
+    "finance": [
+        "factura",
+        "pago",
+        "reembolso",
+        "reintegro",
+        "gasto",
+        "viaje",
+        "finanzas",
+        "metodo",
+    ],
 }
 
 
+def normalize_text(text: str) -> str:
+    normalized = unicodedata.normalize("NFKD", text.lower())
+    return "".join(char for char in normalized if not unicodedata.combining(char))
+
+
+def keyword_matches(query: str) -> list[str]:
+    q = normalize_text(query)
+    return [domain for domain, words in KEYWORDS.items() if any(word in q for word in words)]
+
+
 def route_query(query: str) -> RouteDecision:
-    """Router simple como E23. Si hay API key, se puede apoyar en LLM."""
+    """Router simple como E23. Prioriza reglas estables y usa LLM solo como apoyo."""
+    matched = keyword_matches(query)
+    if len(matched) == 1:
+        return RouteDecision(intent=matched[0], reason=f"Se detectaron senales claras de {matched[0]}.")
+    if len(matched) > 1:
+        return RouteDecision(intent="unknown", reason="La consulta mezcla mas de un dominio interno.")
+
     settings = get_settings()
     if settings.has_openai:
         try:
@@ -45,7 +91,10 @@ def route_query(query: str) -> RouteDecision:
                 [
                     (
                         "system",
-                        "Clasifica la consulta en hr, tech, finance o unknown. "
+                        "Clasifica la consulta interna en hr, tech, finance o unknown. "
+                        "hr incluye vacaciones, licencias, beneficios, bonos, desempeno y onboarding. "
+                        "tech incluye VPN, correo, contrasenas, 2FA, notebooks, soporte y accesos. "
+                        "finance incluye facturas, pagos, reembolsos, reintegros, gastos y viajes. "
                         "Si mezcla areas importantes, usa unknown. Devuelve salida estructurada.",
                     ),
                     ("human", "{query}"),
@@ -60,19 +109,15 @@ def route_query(query: str) -> RouteDecision:
         except Exception:
             pass
 
-    q = query.lower()
-    matched = [domain for domain, words in KEYWORDS.items() if any(word in q for word in words)]
-    if len(matched) == 1:
-        return RouteDecision(intent=matched[0], reason=f"Se detectaron senales claras de {matched[0]}.")
     return RouteDecision(intent="unknown", reason="La consulta es ambigua o esta fuera de alcance.")
 
 
-def orchestrator_node(state: AgentState) -> dict:
+def orchestrator_node(state: AgentState) -> dict[str, Any]:
     decision = route_query(state["query"])
     return {"intent": decision.intent, "reason": decision.reason}
 
 
-def answer_with_rag(domain: str, state: AgentState) -> dict:
+def answer_with_rag(domain: str, state: AgentState) -> dict[str, Any]:
     settings = get_settings()
     if not settings.has_openai:
         return {
@@ -94,8 +139,11 @@ def answer_with_rag(domain: str, state: AgentState) -> dict:
             (
                 "system",
                 f"Sos un agente especialista de {domain}. "
-                "Responde usando unicamente el contexto provisto. "
-                "Si el contexto no alcanza, deci que no tenes informacion suficiente.",
+                "Responde en espanol usando unicamente el contexto provisto. "
+                "Si el contexto contiene una politica relacionada, da una respuesta util y accionable. "
+                "Si falta un dato personal o puntual, explica que dato falta y responde igual con la politica aplicable. "
+                "No digas solamente 'No tengo informacion suficiente' si hay fuentes recuperadas relevantes. "
+                "Inclui 2 a 4 pasos concretos cuando corresponda.",
             ),
             ("human", "Contexto:\n{context}\n\nConsulta:\n{query}\n\nRespuesta:"),
         ]
@@ -105,19 +153,19 @@ def answer_with_rag(domain: str, state: AgentState) -> dict:
     return {"context": context, "sources": sources, "answer": response.content}
 
 
-def hr_agent_node(state: AgentState) -> dict:
+def hr_agent_node(state: AgentState) -> dict[str, Any]:
     return answer_with_rag("hr", state)
 
 
-def tech_agent_node(state: AgentState) -> dict:
+def tech_agent_node(state: AgentState) -> dict[str, Any]:
     return answer_with_rag("tech", state)
 
 
-def finance_agent_node(state: AgentState) -> dict:
+def finance_agent_node(state: AgentState) -> dict[str, Any]:
     return answer_with_rag("finance", state)
 
 
-def unknown_node(state: AgentState) -> dict:
+def unknown_node(state: AgentState) -> dict[str, Any]:
     return {
         "context": "",
         "sources": [],

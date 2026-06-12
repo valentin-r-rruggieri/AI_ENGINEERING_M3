@@ -20,7 +20,7 @@ routing condicional con LangGraph
 respuesta usando documentos recuperados
   |
   v
-trace en Langfuse + evaluator bonus
+trace en Langfuse
 ```
 
 ## Que agrega sobre E23
@@ -34,14 +34,15 @@ E23 trabajaba la idea central con documentos en memoria y retrieval simple. Este
 - retriever por dominio;
 - LangGraph con `add_conditional_edges`;
 - trazabilidad con Langfuse;
-- `test_queries.json` para validar routing;
-- evaluator bonus para registrar scores.
+- `test_queries.json` para validar routing.
 
 ## Estructura
 
 ```txt
 PIM3/
 |-- README.md
+|-- pyproject.toml
+|-- .python-version
 |-- requirements.txt
 |-- .env.example
 |-- test_queries.json
@@ -57,8 +58,7 @@ PIM3/
     |-- rag.py
     |-- agents.py
     |-- graph.py
-    |-- langfuse_setup.py
-    `-- evaluator.py
+    `-- langfuse_setup.py
 ```
 
 ## Archivos principales
@@ -67,44 +67,59 @@ PIM3/
 - `src/rag.py`: carga documentos, divide chunks, crea embeddings, crea FAISS y devuelve retrievers.
 - `src/agents.py`: define el orquestador, los agentes HR/Tech/Finance y el fallback Unknown.
 - `src/graph.py`: arma el `StateGraph` con routing condicional.
-- `src/langfuse_setup.py`: configura callback de Langfuse y registro de scores.
-- `src/evaluator.py`: bonus, evalua la respuesta y registra scores.
+- `src/langfuse_setup.py`: configura callback de Langfuse para trazabilidad.
 - `src/main.py`: ejecuta consultas y validacion offline.
 
-## Instalacion
+## Instalacion con uv
 
-Windows:
+Este proyecto esta preparado para ejecutarse desde VS Code usando `uv`.
 
-```bash
-cd PIM3
-py -3.12 -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
-```
+Desde VS Code:
 
-Linux/macOS:
+1. Abrir la carpeta `PIM3`.
+2. Abrir la terminal integrada.
+3. Ejecutar:
 
 ```bash
-cd PIM3
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
+uv sync
+uv run python -m src.main --validate
 ```
 
-Nota: si `faiss-cpu` no instala con Python 3.14, usar Python 3.10, 3.11 o 3.12.
+Tambien quedan tareas listas en VS Code:
+
+- `PIM3: uv sync`
+- `PIM3: validate`
+- `PIM3: query tech`
+- `PIM3: query unknown`
+
+Para una consulta puntual:
+
+```bash
+uv run python -m src.main --query "No puedo conectarme a la VPN desde mi notebook"
+```
+
+`uv` usa `.python-version` y `pyproject.toml`, por eso no depende del Python global de la maquina. El proyecto pide Python 3.11 o 3.12 porque `faiss-cpu` puede fallar en versiones mas nuevas.
+
+`requirements.txt` queda como respaldo para instalaciones tradicionales, pero el flujo recomendado es `uv`.
 
 ## Configuracion
 
-Completar `.env`:
+Crear `.env` desde `.env.example`:
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Luego completar:
 
 ```env
 OPENAI_API_KEY=your-key-here
 
 LANGFUSE_PUBLIC_KEY=pk-lf-xxx
 LANGFUSE_SECRET_KEY=sk-lf-xxx
-LANGFUSE_HOST=https://cloud.langfuse.com
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
 
 OPENAI_MODEL=gpt-4o-mini
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
@@ -112,24 +127,26 @@ OPENAI_EMBEDDING_MODEL=text-embedding-3-small
 
 Sin `OPENAI_API_KEY`, el proyecto puede validar chunks y routing offline, pero no puede ejecutar embeddings, FAISS ni respuestas RAG reales.
 
+Langfuse forma parte del proyecto. Para la demo completa, completar `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` y `LANGFUSE_BASE_URL`; la evaluacion de calidad se realiza directamente en Langfuse, no con un agente evaluador dentro del grafo.
+
 ## Ejecucion
 
 Modo interactivo:
 
 ```bash
-python -m src.main
+uv run python -m src.main
 ```
 
 Consulta puntual:
 
 ```bash
-python -m src.main --query "No puedo conectarme a la VPN desde mi notebook"
+uv run python -m src.main --query "No puedo conectarme a la VPN desde mi notebook"
 ```
 
 Validacion offline:
 
 ```bash
-python -m src.main --validate
+uv run python -m src.main --validate
 ```
 
 La validacion comprueba:
@@ -170,11 +187,11 @@ Respuesta: fallback fuera de alcance
 - Cada agente tiene su propio dominio y su propio retriever.
 - El RAG usa documentos reales, chunks, embeddings y FAISS.
 - Langfuse se integra como callback para que cada request quede trazada.
-- El evaluator es bonus: mide calidad, pero no agrega complejidad al flujo principal.
+- La evaluacion se revisa en Langfuse, usando traces, datasets, scores o evaluaciones manuales desde la plataforma.
 
 ## Limitaciones
 
 - La calidad de las respuestas depende de los documentos.
 - Las consultas ambiguas se mandan a `unknown`.
 - El vector store local se guarda en `vectorstores/` y se puede borrar para regenerar.
-- El evaluator no reemplaza revision humana.
+- La evaluacion de calidad no vive en el grafo: se realiza en Langfuse para no mezclar orquestacion con evaluacion.

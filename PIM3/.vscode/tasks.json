@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PIM3: uv sync",
+      "type": "shell",
+      "command": "uv sync",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "PIM3: validate",
+      "type": "shell",
+      "command": "uv run python -m src.main --validate",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PIM3: query tech",
+      "type": "shell",
+      "command": "uv run python -m src.main --query \"No puedo conectarme a la VPN desde mi notebook\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "PIM3: query unknown",
+      "type": "shell",
+      "command": "uv run python -m src.main --query \"Cual es la capital de Francia?\"",
+      "problemMatcher": []
+    }
+  ]
+}

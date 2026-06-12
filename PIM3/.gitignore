@@ -7,3 +7,4 @@ __pycache__/
 .ipynb_checkpoints/
 vectorstores/
 *.log
+GUION_GRABACION_PIM3.md

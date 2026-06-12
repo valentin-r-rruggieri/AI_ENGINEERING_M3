@@ -32,9 +32,9 @@ class Settings:
     openai_embedding_model: str
     langfuse_public_key: str
     langfuse_secret_key: str
-    langfuse_host: str
-    chunk_size: int = 280
-    chunk_overlap: int = 40
+    langfuse_base_url: str
+    chunk_size: int = 900
+    chunk_overlap: int = 120
     retriever_k: int = 4
 
     @property
@@ -60,5 +60,8 @@ def get_settings() -> Settings:
         openai_embedding_model=os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
         langfuse_public_key=os.getenv("LANGFUSE_PUBLIC_KEY", ""),
         langfuse_secret_key=os.getenv("LANGFUSE_SECRET_KEY", ""),
-        langfuse_host=os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
+        langfuse_base_url=os.getenv(
+            "LANGFUSE_BASE_URL",
+            os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
+        ),
     )

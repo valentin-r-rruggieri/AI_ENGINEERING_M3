@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 
 if __package__ is None or __package__ == "":
@@ -12,19 +13,22 @@ if __package__ is None or __package__ == "":
 from src.agents import route_query
 from src.config import DOMAIN_DIRS, ROOT_DIR
 from src.graph import build_graph, initial_state
-from src.langfuse_setup import graph_config
+from src.langfuse_setup import flush_langfuse, graph_config
 from src.rag import count_chunks
 
 
-def run_query(query: str) -> dict:
+def run_query(query: str) -> dict[str, Any]:
     graph = build_graph()
     config = graph_config()
-    if config:
-        return graph.invoke(initial_state(query), config=config)
-    return graph.invoke(initial_state(query))
+    try:
+        if config:
+            return graph.invoke(initial_state(query), config=config)
+        return graph.invoke(initial_state(query))
+    finally:
+        flush_langfuse()
 
 
-def print_result(result: dict) -> None:
+def print_result(result: dict[str, Any]) -> None:
     print("\n" + "=" * 70)
     print(f"Pregunta: {result['query']}")
     print(f"Intent: {result.get('intent')}")
@@ -36,11 +40,6 @@ def print_result(result: dict) -> None:
         print("\nFuentes recuperadas:")
         for source in result["sources"]:
             print(f"- {source['source']}")
-
-    if result.get("evaluation"):
-        print("\nEvaluator:")
-        for key, value in result["evaluation"].items():
-            print(f"- {key}: {value}")
     print("=" * 70)
 
 

@@ -7,6 +7,9 @@ from typing import Any
 from src.config import DOMAIN_DIRS, VECTORSTORE_DIR, get_settings
 
 
+VECTORSTORE_VERSION = "v2"
+
+
 def load_documents(folder: Path) -> list:
     """Carga documentos reales desde disco. Para el PI usamos .md/.txt/.csv."""
     from langchain_core.documents import Document
@@ -39,7 +42,7 @@ def split_documents(documents: list) -> list:
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
-        separators=["\n## ", "\n### ", "\n\n", "\n", ". ", " ", ""],
+        separators=["\n\n", "\n", ". ", " ", ""],
     )
     return splitter.split_documents(documents)
 
@@ -90,7 +93,7 @@ def get_retriever(domain: str):
 
     settings = get_settings()
     folder = DOMAIN_DIRS[domain]
-    store_path = VECTORSTORE_DIR / domain
+    store_path = VECTORSTORE_DIR / VECTORSTORE_VERSION / domain
     embeddings = build_embeddings()
 
     if store_path.exists():

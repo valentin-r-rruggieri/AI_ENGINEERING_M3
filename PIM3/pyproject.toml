@@ -1,0 +1,29 @@
+[project]
+name = "pim3-langgraph-rag-langfuse"
+version = "0.1.0"
+description = "PIM3: multi-agent RAG with LangGraph and Langfuse tracing"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "faiss-cpu",
+    "ipykernel",
+    "jupyter",
+    "langchain",
+    "langchain-community",
+    "langchain-openai",
+    "langchain-text-splitters",
+    "langfuse",
+    "openai",
+    "pydantic",
+    "pypdf",
+    "python-dotenv",
+    "rich",
+    "tiktoken",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+package = false
