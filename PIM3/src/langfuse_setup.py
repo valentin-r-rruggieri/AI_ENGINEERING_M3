@@ -5,11 +5,14 @@ from typing import Any
 from src.config import get_settings
 
 
+# Nombre con el que buscamos las ejecuciones en Langfuse.
 TRACE_NAME = "pim3-multiagent-rag"
+# Cliente global reutilizable: evita crear un cliente por nodo o por callback.
 _LANGFUSE_CLIENT: Any | None = None
 
 
 def get_langfuse_callback() -> Any | None:
+    # El CallbackHandler conecta LangChain/LangGraph con Langfuse.
     client = get_langfuse_client()
     if client is None:
         return None
@@ -20,6 +23,7 @@ def get_langfuse_callback() -> Any | None:
         return None
 
     settings = get_settings()
+    # En langfuse 4.x el callback usa el cliente ya inicializado por public_key.
     return CallbackHandler(public_key=settings.langfuse_public_key)
 
 
@@ -30,6 +34,7 @@ def get_langfuse_client() -> Any | None:
 
     settings = get_settings()
     if not settings.has_langfuse:
+        # Sin credenciales reales, la app corre sin tracing remoto.
         return None
 
     try:
@@ -37,6 +42,7 @@ def get_langfuse_client() -> Any | None:
     except ImportError:
         return None
 
+    # Inicializa el cliente con la region correcta: EU, US, Japan, etc.
     _LANGFUSE_CLIENT = Langfuse(
         public_key=settings.langfuse_public_key,
         secret_key=settings.langfuse_secret_key,
@@ -46,6 +52,7 @@ def get_langfuse_client() -> Any | None:
 
 
 def graph_config() -> dict[str, Any]:
+    # Config que se pasa a graph.invoke(..., config=config).
     callback = get_langfuse_callback()
     if callback is None:
         return {}
@@ -57,6 +64,7 @@ def graph_config() -> dict[str, Any]:
 
 
 def flush_langfuse() -> None:
+    # La CLI termina rapido; flush fuerza el envio antes de cerrar el proceso.
     client = get_langfuse_client()
     if client is not None:
         client.flush()

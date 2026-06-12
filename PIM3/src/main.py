@@ -8,6 +8,7 @@ from typing import Any
 
 
 if __package__ is None or __package__ == "":
+    # Permite ejecutar tanto `python -m src.main` como `python src/main.py`.
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.agents import route_query
@@ -18,17 +19,21 @@ from src.rag import count_chunks
 
 
 def run_query(query: str) -> dict[str, Any]:
+    # Construye el grafo por corrida para mantener la demo simple y explicita.
     graph = build_graph()
     config = graph_config()
     try:
+        # Si Langfuse esta configurado, graph.invoke recibe callbacks.
         if config:
             return graph.invoke(initial_state(query), config=config)
         return graph.invoke(initial_state(query))
     finally:
+        # Asegura que las trazas se envien antes de que cierre la CLI.
         flush_langfuse()
 
 
 def print_result(result: dict[str, Any]) -> None:
+    # Salida pensada para clase: muestra decision de routing, respuesta y fuentes.
     print("\n" + "=" * 70)
     print(f"Pregunta: {result['query']}")
     print(f"Intent: {result.get('intent')}")
@@ -44,6 +49,7 @@ def print_result(result: dict[str, Any]) -> None:
 
 
 def validate() -> int:
+    # Validacion offline: no necesita OpenAI si el router resuelve por keywords.
     print("Chunks por dominio")
     ok = True
     for domain in DOMAIN_DIRS:
@@ -54,6 +60,7 @@ def validate() -> int:
     print("\nRouting con test_queries.json")
     queries = json.loads((ROOT_DIR / "test_queries.json").read_text(encoding="utf-8"))
     for item in queries:
+        # Golden dataset minimo: compara intent esperado vs detectado.
         decision = route_query(item["query"])
         passed = decision.intent == item["expected_intent"]
         ok = ok and passed
@@ -64,12 +71,14 @@ def validate() -> int:
 
 
 def main() -> None:
+    # CLI con tres modos: validate, query unica o loop interactivo.
     parser = argparse.ArgumentParser(description="PIM3 multiagente RAG simple")
     parser.add_argument("--query", "-q", help="Consulta para ejecutar.")
     parser.add_argument("--validate", action="store_true", help="Valida chunks y routing offline.")
     args = parser.parse_args()
 
     if args.validate:
+        # `SystemExit` devuelve codigo 0 si ok, 1 si fallo.
         raise SystemExit(validate())
 
     if args.query:
@@ -78,6 +87,7 @@ def main() -> None:
 
     print("PIM3 multiagente RAG. Escribi 'salir' para terminar.")
     while True:
+        # Modo interactivo para probar varias preguntas en una sola corrida.
         query = input("\nPregunta: ").strip()
         if query.lower() in {"salir", "exit", "quit"}:
             break

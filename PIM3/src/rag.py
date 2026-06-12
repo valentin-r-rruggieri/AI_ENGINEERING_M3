@@ -7,6 +7,8 @@ from typing import Any
 from src.config import DOMAIN_DIRS, VECTORSTORE_DIR, get_settings
 
 
+# Versionamos el indice local para no reutilizar FAISS viejo si cambia
+# la estrategia de chunking.
 VECTORSTORE_VERSION = "v2"
 
 
@@ -16,11 +18,13 @@ def load_documents(folder: Path) -> list:
 
     docs = []
     for path in sorted(folder.rglob("*")):
+        # Solo indexamos archivos de texto que el sistema RAG puede leer.
         if not path.is_file() or path.suffix.lower() not in {".md", ".txt", ".csv"}:
             continue
         docs.append(
             Document(
                 page_content=path.read_text(encoding="utf-8"),
+                # La metadata permite mostrar fuentes recuperadas en consola.
                 metadata={"source": str(path), "file_name": path.name},
             )
         )
@@ -37,8 +41,11 @@ def split_documents(documents: list) -> list:
         try:
             from langchain.text_splitter import RecursiveCharacterTextSplitter
         except ImportError:
+            # Fallback simple para que la validacion no dependa de todos los extras.
             return split_documents_simple(documents, settings.chunk_size, settings.chunk_overlap)
 
+    # Usamos chunks suficientemente grandes para conservar la politica completa
+    # alrededor de cada titulo. Esto evita recuperar solo encabezados.
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
@@ -60,16 +67,19 @@ def split_documents_simple(documents: list, chunk_size: int, chunk_overlap: int)
             end = min(start + chunk_size, len(text))
             chunk_text = text[start:end].strip()
             if chunk_text:
+                # Preservamos metadata original y agregamos indice de chunk.
                 metadata = {**doc.metadata, "chunk_index": chunk_index}
                 chunks.append(Document(page_content=chunk_text, metadata=metadata))
             if end == len(text):
                 break
+            # El overlap mantiene continuidad entre chunks consecutivos.
             start = max(end - chunk_overlap, start + 1)
             chunk_index += 1
     return chunks
 
 
 def count_chunks(domain: str) -> int:
+    # Usado por `--validate` para comprobar que cada dominio tiene corpus suficiente.
     return len(split_documents(load_documents(DOMAIN_DIRS[domain])))
 
 
@@ -80,6 +90,7 @@ def build_embeddings():
 
     from langchain_openai import OpenAIEmbeddings
 
+    # Embeddings convierte chunks en vectores para busqueda semantica con FAISS.
     return OpenAIEmbeddings(
         model=settings.openai_embedding_model,
         api_key=settings.openai_api_key,
@@ -97,6 +108,7 @@ def get_retriever(domain: str):
     embeddings = build_embeddings()
 
     if store_path.exists():
+        # Cargar FAISS evita recalcular embeddings en cada corrida.
         vectorstore = FAISS.load_local(
             str(store_path),
             embeddings,
@@ -106,14 +118,17 @@ def get_retriever(domain: str):
         chunks = split_documents(load_documents(folder))
         if len(chunks) < 50:
             raise ValueError(f"{domain} tiene {len(chunks)} chunks; minimo esperado: 50")
+        # Primera ejecucion: se crean embeddings y se guarda el indice local.
         vectorstore = FAISS.from_documents(chunks, embeddings)
         store_path.mkdir(parents=True, exist_ok=True)
         vectorstore.save_local(str(store_path))
 
+    # k define cuantas fuentes se recuperan por pregunta.
     return vectorstore.as_retriever(search_kwargs={"k": settings.retriever_k})
 
 
 def retrieve_context(domain: str, query: str) -> tuple[str, list[dict[str, Any]]]:
+    # Punto de entrada usado por los agentes: dominio + query -> contexto + fuentes.
     retriever = get_retriever(domain)
     docs = retriever.invoke(query)
 
@@ -124,4 +139,5 @@ def retrieve_context(domain: str, query: str) -> tuple[str, list[dict[str, Any]]
         context_parts.append(f"[{index}] {source}\n{doc.page_content}")
         sources.append({"source": source, "content": doc.page_content, "metadata": doc.metadata})
 
+    # El contexto va al prompt; sources se imprime para trazabilidad local.
     return "\n\n".join(context_parts), sources
