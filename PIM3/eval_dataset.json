@@ -1,0 +1,50 @@
+[
+  {
+    "id": "pim3-001",
+    "query": "No puedo conectarme a la VPN desde mi notebook",
+    "expected_intent": "tech",
+    "expected_keywords": ["vpn", "cliente vpn", "certificado", "credenciales"]
+  },
+  {
+    "id": "pim3-002",
+    "query": "que dia salgo de vacaciones",
+    "expected_intent": "hr",
+    "expected_keywords": ["vacaciones", "antiguedad", "dias habiles", "15 dias"]
+  },
+  {
+    "id": "pim3-003",
+    "query": "Cuando se procesa el reembolso de una factura aprobada?",
+    "expected_intent": "finance",
+    "expected_keywords": ["reembolso", "factura", "aprobada", "pago"]
+  },
+  {
+    "id": "pim3-004",
+    "query": "Necesito cambiar mi contrasena del correo corporativo",
+    "expected_intent": "tech",
+    "expected_keywords": ["contrasena", "correo", "portal", "identidad"]
+  },
+  {
+    "id": "pim3-005",
+    "query": "Como se calcula el bono anual de desempeno?",
+    "expected_intent": "hr",
+    "expected_keywords": ["bono", "desempeno", "objetivos", "compania"]
+  },
+  {
+    "id": "pim3-006",
+    "query": "Que documentacion necesito para cargar un gasto de viaje?",
+    "expected_intent": "finance",
+    "expected_keywords": ["gasto", "viaje", "comprobante", "documentacion"]
+  },
+  {
+    "id": "pim3-007",
+    "query": "Cual es la capital de Francia?",
+    "expected_intent": "unknown",
+    "expected_keywords": ["no tengo documentacion", "rr. hh.", "soporte tecnico", "finanzas"]
+  },
+  {
+    "id": "pim3-008",
+    "query": "Tengo un problema con la VPN y ademas quiero pedir vacaciones",
+    "expected_intent": "unknown",
+    "expected_keywords": ["no tengo documentacion", "rr. hh.", "soporte tecnico", "finanzas"]
+  }
+]

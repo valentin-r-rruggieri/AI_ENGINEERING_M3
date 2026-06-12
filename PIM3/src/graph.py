@@ -1,3 +1,9 @@
+"""Definicion del grafo LangGraph del PIM3.
+
+El grafo conecta el orquestador con los agentes especialistas mediante routing
+condicional. La evaluacion bonus vive fuera del grafo principal.
+"""
+
 from __future__ import annotations
 
 from langgraph.graph import END, START, StateGraph
@@ -64,4 +70,5 @@ def initial_state(query: str) -> AgentState:
         "context": "",
         "sources": [],
         "answer": "",
+        "trace_steps": [],
     }

@@ -30,7 +30,7 @@ E23 trabajaba la idea central con documentos en memoria y retrieval simple. Este
 - documentos reales en `data/hr_docs`, `data/tech_docs` y `data/finance_docs`;
 - chunking con LangChain;
 - embeddings de OpenAI;
-- vector store FAISS;
+- vector store ChromaDB;
 - retriever por dominio;
 - LangGraph con `add_conditional_edges`;
 - trazabilidad con Langfuse;
@@ -46,6 +46,7 @@ PIM3/
 |-- requirements.txt
 |-- .env.example
 |-- test_queries.json
+|-- eval_dataset.json
 |
 |-- data/
 |   |-- hr_docs/
@@ -58,17 +59,19 @@ PIM3/
     |-- rag.py
     |-- agents.py
     |-- graph.py
-    `-- langfuse_setup.py
+    |-- langfuse_setup.py
+    `-- evaluator.py
 ```
 
 ## Archivos principales
 
 - `src/config.py`: carga `.env`, rutas y nombres de modelos.
-- `src/rag.py`: carga documentos, divide chunks, crea embeddings, crea FAISS y devuelve retrievers.
+- `src/rag.py`: carga documentos, divide chunks, crea embeddings, crea ChromaDB y devuelve retrievers.
 - `src/agents.py`: define el orquestador, los agentes HR/Tech/Finance y el fallback Unknown.
 - `src/graph.py`: arma el `StateGraph` con routing condicional.
 - `src/langfuse_setup.py`: configura callback de Langfuse para trazabilidad.
 - `src/main.py`: ejecuta consultas y validacion offline.
+- `src/evaluator.py`: bonus, ejecuta dataset y registra scores en Langfuse con Score API.
 
 ## Instalacion con uv
 
@@ -91,6 +94,7 @@ Tambien quedan tareas listas en VS Code:
 - `PIM3: validate`
 - `PIM3: query tech`
 - `PIM3: query unknown`
+- `PIM3: bonus evaluator`
 
 Para una consulta puntual:
 
@@ -98,7 +102,7 @@ Para una consulta puntual:
 uv run python -m src.main --query "No puedo conectarme a la VPN desde mi notebook"
 ```
 
-`uv` usa `.python-version` y `pyproject.toml`, por eso no depende del Python global de la maquina. El proyecto pide Python 3.11 o 3.12 porque `faiss-cpu` puede fallar en versiones mas nuevas.
+`uv` usa `.python-version` y `pyproject.toml`, por eso no depende del Python global de la maquina.
 
 `requirements.txt` queda como respaldo para instalaciones tradicionales, pero el flujo recomendado es `uv`.
 
@@ -125,9 +129,37 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
 ```
 
-Sin `OPENAI_API_KEY`, el proyecto puede validar chunks y routing offline, pero no puede ejecutar embeddings, FAISS ni respuestas RAG reales.
+Sin `OPENAI_API_KEY`, el proyecto puede validar chunks y routing offline, pero no puede ejecutar embeddings, ChromaDB ni respuestas RAG reales.
 
 Langfuse forma parte del proyecto. Para la demo completa, completar `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` y `LANGFUSE_BASE_URL`; la evaluacion de calidad se realiza directamente en Langfuse, no con un agente evaluador dentro del grafo.
+
+## Bonus: evaluator con Langfuse Score API
+
+La rubrica bonus se cubre con:
+
+- `eval_dataset.json`: dataset de evaluacion.
+- `src/evaluator.py`: runner que ejecuta cada caso y registra scores en Langfuse.
+
+Ejecutar evaluacion:
+
+```bash
+uv run python -m src.evaluator
+```
+
+Crear o actualizar el dataset en Langfuse y luego ejecutar:
+
+```bash
+uv run python -m src.evaluator --upload-dataset --run-name pim3-demo
+```
+
+Scores registrados por caso:
+
+- `routing_correct`
+- `has_expected_sources`
+- `answer_generated`
+- `keyword_coverage`
+
+Esto usa la Score API de Langfuse sobre los traces generados por el grafo. El evaluador es bonus y no forma parte del flujo principal de LangGraph.
 
 ## Ejecucion
 
@@ -157,15 +189,33 @@ La validacion comprueba:
 ## Ejemplos esperados
 
 ```txt
-Input: Cuantos dias de vacaciones tengo si llevo 3 anos?
-Intent: hr
-Respuesta: basada en documentos de data/hr_docs
+CHAT PIM3 - RAG MULTIAGENTE
+Usuario: No puedo conectarme a la VPN desde mi notebook
+
+1) Decision del orquestador
+- Intent detectado: tech
+- Motivo visible: Se detectaron senales claras de tech.
+
+2) Pasos ejecutados
+- Entrada: recibe la consulta.
+- Clasificacion: elige el dominio tech.
+- Agente seleccionado: ejecuta el agente especialista.
+- Busqueda RAG: consulta ChromaDB.
+- Fuentes: muestra documentos recuperados.
+- Generacion: redacta la respuesta con el contexto.
+
+3) Busqueda y fuentes
+- Fuente 1: tech_policy_05.md
+  Evidencia: ## 54. Conexion VPN...
+
+4) Respuesta final
+Respuesta basada en documentos de data/tech_docs.
 ```
 
 ```txt
-Input: No puedo conectarme a la VPN desde mi notebook
-Intent: tech
-Respuesta: basada en documentos de data/tech_docs
+Input: Cuantos dias de vacaciones tengo si llevo 3 anos?
+Intent: hr
+Respuesta: basada en documentos de data/hr_docs
 ```
 
 ```txt
@@ -185,9 +235,9 @@ Respuesta: fallback fuera de alcance
 - El orquestador es simple y visible, como en E23.
 - El routing vive dentro de LangGraph con `add_conditional_edges`.
 - Cada agente tiene su propio dominio y su propio retriever.
-- El RAG usa documentos reales, chunks, embeddings y FAISS.
+- El RAG usa documentos reales, chunks, embeddings y ChromaDB.
 - Langfuse se integra como callback para que cada request quede trazada.
-- La evaluacion se revisa en Langfuse, usando traces, datasets, scores o evaluaciones manuales desde la plataforma.
+- La evaluacion bonus se registra en Langfuse con `src/evaluator.py`, dataset y Score API.
 
 ## Limitaciones
 

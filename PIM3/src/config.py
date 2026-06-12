@@ -1,3 +1,9 @@
+"""Configuracion central del PIM3.
+
+Este modulo concentra rutas, variables de entorno y parametros de RAG para que
+el resto del proyecto no tenga configuracion duplicada.
+"""
+
 from __future__ import annotations
 
 import os

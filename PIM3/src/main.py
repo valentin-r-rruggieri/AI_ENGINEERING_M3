@@ -1,3 +1,9 @@
+"""CLI del PIM3.
+
+Permite validar el proyecto, ejecutar una consulta puntual o abrir un modo
+interactivo desde terminal usando `uv run python -m src.main`.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -18,6 +24,23 @@ from src.langfuse_setup import flush_langfuse, graph_config
 from src.rag import count_chunks
 
 
+def evidence_preview(content: str, limit: int = 180) -> str:
+    # Para la demo conviene mostrar contenido util, no notas administrativas.
+    skipped_prefixes = (
+        "Notas de control documental",
+        "- La informacion de esta seccion",
+        "- Si el caso no coincide",
+        "- Mantener actualizada",
+        "- Las respuestas a clientes internos",
+    )
+    lines = [line.strip() for line in content.splitlines() if line.strip()]
+    useful_lines = [line for line in lines if not line.startswith(skipped_prefixes)]
+    preview = " ".join(useful_lines[:3] or lines[:3])
+    if len(preview) > limit:
+        preview = preview[: limit - 3] + "..."
+    return preview
+
+
 def run_query(query: str) -> dict[str, Any]:
     # Construye el grafo por corrida para mantener la demo simple y explicita.
     graph = build_graph()
@@ -33,18 +56,32 @@ def run_query(query: str) -> dict[str, Any]:
 
 
 def print_result(result: dict[str, Any]) -> None:
-    # Salida pensada para clase: muestra decision de routing, respuesta y fuentes.
+    # Salida pensada para clase: muestra que hizo el sistema antes de responder.
     print("\n" + "=" * 70)
-    print(f"Pregunta: {result['query']}")
-    print(f"Intent: {result.get('intent')}")
-    print(f"Razon: {result.get('reason')}")
-    print("\nRespuesta:")
-    print(result.get("answer", ""))
+    print("CHAT PIM3 - RAG MULTIAGENTE")
+    print("=" * 70)
+    print(f"Usuario: {result['query']}")
 
+    print("\n1) Decision del orquestador")
+    print(f"- Intent detectado: {result.get('intent')}")
+    print(f"- Motivo visible: {result.get('reason')}")
+
+    if result.get("trace_steps"):
+        print("\n2) Pasos ejecutados")
+        for index, step in enumerate(result["trace_steps"], start=1):
+            print(f"- {index}. {step['step']}: {step['detail']}")
+
+    print("\n3) Busqueda y fuentes")
     if result.get("sources"):
-        print("\nFuentes recuperadas:")
-        for source in result["sources"]:
-            print(f"- {source['source']}")
+        for index, source in enumerate(result["sources"], start=1):
+            preview = evidence_preview(source.get("content", ""))
+            print(f"- Fuente {index}: {source['source']}")
+            print(f"  Evidencia: {preview}")
+    else:
+        print("- No se recuperaron fuentes porque la consulta quedo fuera de alcance o falta configuracion.")
+
+    print("\n4) Respuesta final")
+    print(result.get("answer", ""))
     print("=" * 70)
 
 

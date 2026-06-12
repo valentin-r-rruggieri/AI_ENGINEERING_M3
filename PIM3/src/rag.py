@@ -1,15 +1,23 @@
+"""Funciones de RAG real para el PIM3.
+
+Aca viven la carga de documentos, chunking, embeddings, ChromaDB y retrieval.
+Los agentes consumen este modulo para obtener contexto antes de responder.
+"""
+
 from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from pydantic import SecretStr
+
 from src.config import DOMAIN_DIRS, VECTORSTORE_DIR, get_settings
 
 
-# Versionamos el indice local para no reutilizar FAISS viejo si cambia
-# la estrategia de chunking.
-VECTORSTORE_VERSION = "v2"
+# Versionamos el indice local para no reutilizar vector stores viejos si cambia
+# la tecnologia o la estrategia de chunking.
+VECTORSTORE_VERSION = "chroma-v1"
 
 
 def load_documents(folder: Path) -> list:
@@ -38,11 +46,8 @@ def split_documents(documents: list) -> list:
     try:
         from langchain_text_splitters import RecursiveCharacterTextSplitter
     except ImportError:
-        try:
-            from langchain.text_splitter import RecursiveCharacterTextSplitter
-        except ImportError:
-            # Fallback simple para que la validacion no dependa de todos los extras.
-            return split_documents_simple(documents, settings.chunk_size, settings.chunk_overlap)
+        # Fallback simple para que la validacion no dependa de todos los extras.
+        return split_documents_simple(documents, settings.chunk_size, settings.chunk_overlap)
 
     # Usamos chunks suficientemente grandes para conservar la politica completa
     # alrededor de cada titulo. Esto evita recuperar solo encabezados.
@@ -90,38 +95,43 @@ def build_embeddings():
 
     from langchain_openai import OpenAIEmbeddings
 
-    # Embeddings convierte chunks en vectores para busqueda semantica con FAISS.
+    # Embeddings convierte chunks en vectores para busqueda semantica con ChromaDB.
     return OpenAIEmbeddings(
         model=settings.openai_embedding_model,
-        api_key=settings.openai_api_key,
+        api_key=SecretStr(settings.openai_api_key),
     )
 
 
 @lru_cache(maxsize=3)
 def get_retriever(domain: str):
-    """Crea o carga un retriever FAISS por dominio."""
-    from langchain_community.vectorstores import FAISS
+    """Crea o carga un retriever ChromaDB por dominio."""
+    from langchain_chroma import Chroma
 
     settings = get_settings()
     folder = DOMAIN_DIRS[domain]
     store_path = VECTORSTORE_DIR / VECTORSTORE_VERSION / domain
+    collection_name = f"pim3_{domain}"
     embeddings = build_embeddings()
 
-    if store_path.exists():
-        # Cargar FAISS evita recalcular embeddings en cada corrida.
-        vectorstore = FAISS.load_local(
-            str(store_path),
-            embeddings,
-            allow_dangerous_deserialization=True,
+    if store_path.exists() and any(store_path.iterdir()):
+        # Cargar ChromaDB evita recalcular embeddings en cada corrida.
+        vectorstore = Chroma(
+            collection_name=collection_name,
+            persist_directory=str(store_path),
+            embedding_function=embeddings,
         )
     else:
         chunks = split_documents(load_documents(folder))
         if len(chunks) < 50:
             raise ValueError(f"{domain} tiene {len(chunks)} chunks; minimo esperado: 50")
-        # Primera ejecucion: se crean embeddings y se guarda el indice local.
-        vectorstore = FAISS.from_documents(chunks, embeddings)
+        # Primera ejecucion: se crean embeddings y se guarda el indice local de ChromaDB.
         store_path.mkdir(parents=True, exist_ok=True)
-        vectorstore.save_local(str(store_path))
+        vectorstore = Chroma.from_documents(
+            documents=chunks,
+            embedding=embeddings,
+            collection_name=collection_name,
+            persist_directory=str(store_path),
+        )
 
     # k define cuantas fuentes se recuperan por pregunta.
     return vectorstore.as_retriever(search_kwargs={"k": settings.retriever_k})

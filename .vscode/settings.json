@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}\\PIM3\\.venv\\Scripts\\python.exe",
+  "python.terminal.activateEnvironment": false,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}\\PIM3"
+  ],
+  "python.analysis.typeCheckingMode": "basic"
+}

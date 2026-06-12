@@ -29,6 +29,13 @@
       "type": "shell",
       "command": "uv run python -m src.main --query \"Cual es la capital de Francia?\"",
       "problemMatcher": []
+    },
+    {
+      "label": "PIM3: bonus evaluator",
+      "type": "shell",
+      "command": "uv run python -m src.evaluator --upload-dataset --run-name pim3-demo",
+      "group": "test",
+      "problemMatcher": []
     }
   ]
 }

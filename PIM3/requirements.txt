@@ -5,7 +5,8 @@ langchain-text-splitters
 langgraph
 langfuse
 openai
-faiss-cpu
+chromadb
+langchain-chroma
 tiktoken
 python-dotenv
 pydantic
