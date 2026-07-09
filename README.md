@@ -37,23 +37,21 @@ extras/
 │   └── E13 → Custom Tools Robustas
 │
 ├── M3L2/
-    ├── E00 → Chat + PromptTemplate
-    ├── E01 → LCEL Chains
-    ├── E02 → Chat + Memory
-    ├── E03 → Tools + API
-    ├── E04 → RAG Básico
-    ├── E05 → RAG + Memory
+    ├── E00 → LLM Wrapper
+    ├── E01 → PromptTemplate
+    ├── E02 → Output Parser
+    ├── E03 → LCEL Chain
+    ├── E04 → Chat + Memory
+    ├── E05 → Tools + API
     ├── E06 → De Manual a LangChain
-    ├── E07 → PromptTemplate Avanzado
-    ├── E08 → LCEL Avanzado
-    ├── E09 → RAG Mini
-    ├── E10 → LLM Wrapper
-    ├── E11 → Output Parser
-    ├── E12 → Embeddings
-    ├── E13 → FAISS
-    ├── E14 → Retriever
-    ├── E15 → Refactor Code
-    └── E16 → RAG desde Cero
+    ├── E07 → Embeddings
+    ├── E08 → FAISS
+    ├── E09 → Retriever
+    ├── E10 → RAG Mini
+    ├── E11 → RAG + Memory
+    ├── E12 → RAG desde Cero
+    ├── E13 → Refactor Code
+    └── E14 → LangChain vs Manual (extra, solo Resolution)
 │
 └── M3L3/
     ├── E00 → El problema del agente único
@@ -356,65 +354,102 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 
 ## 🎯 Ejercicios M3L2
 
+> 📐 **La numeración sigue el orden de dictado recomendado para una clase de 45 min**: fundamentos del modelo (E00-E03) → memoria y tools (E04-E06) → RAG en profundidad (E07-E12) → refactor de cierre (E13).
+
 | # | 📌 Ejercicio | 📖 Tema | ⏱️ Duración | 🎓 Nivel |
 |---|-----------|------|----------|---------|
-| 1 | **E00** | Chat básico con PromptTemplate | 20 min | 🟢 Básico |
-| 2 | **E01** | LCEL y cadenas en LangChain | 20 min | 🟢 Básico |
-| 3 | **E02** | Chat con memoria en LangChain | 25 min | 🟠 Intermedio |
-| 4 | **E03** | Tools con LangChain y API | 25 min | 🟠 Intermedio |
-| 5 | **E04** | RAG básico con LangChain | 30 min | 🟠 Intermedio |
-| 6 | **E05** | RAG con memoria | 35 min | 🟠 Intermedio |
+| 1 | **E00** | LLM Wrapper (`ChatOpenAI` como objeto) | 20 min | 🟠 Intermedio |
+| 2 | **E01** | PromptTemplate | 20 min | 🟠 Intermedio |
+| 3 | **E02** | Output Parser | 20 min | 🟠 Intermedio |
+| 4 | **E03** | LCEL Chain | 25 min | 🟠 Intermedio |
+| 5 | **E04** | Chat con memoria en LangChain | 25 min | 🟠 Intermedio |
+| 6 | **E05** | Tools con LangChain y API | 25 min | 🟠 Intermedio |
 | 7 | **E06** | De manual a LangChain | 25 min | 🟠 Intermedio |
-| 8 | **E07** | PromptTemplate avanzado | 20 min | 🟠 Intermedio |
-| 9 | **E08** | LCEL Chain avanzado | 25 min | 🟠 Intermedio |
-| 10 | **E09** | RAG mini | 20 min | 🟢 Básico |
-| 11 | **E10** | LLM Wrapper | 20 min | 🟠 Intermedio |
-| 12 | **E11** | Output Parser | 20 min | 🟠 Intermedio |
-| 13 | **E12** | Embeddings | 25 min | 🟠 Intermedio |
-| 14 | **E13** | FAISS | 30 min | 🟠 Intermedio |
-| 15 | **E14** | Retriever | 25 min | 🟠 Intermedio |
-| 16 | **E15** | Refactor code | 30 min | 🟠 Intermedio |
-| 17 | **E16** | RAG desde cero | 45 min | 🔴 Avanzado |
+| 8 | **E07** | Embeddings | 25 min | 🟠 Intermedio |
+| 9 | **E08** | FAISS | 30 min | 🟠 Intermedio |
+| 10 | **E09** | Retriever | 25 min | 🟠 Intermedio |
+| 11 | **E10** | RAG mini | 20 min | 🟢 Básico |
+| 12 | **E11** | RAG con memoria | 35 min | 🟠 Intermedio |
+| 13 | **E12** | RAG desde cero | 45 min | 🔴 Avanzado |
+| 14 | **E13** | Refactor code | 30 min | 🟠 Intermedio |
 
-### E00 - Chat Básico con PromptTemplate
+> ➕ **Extra**: **E14 - LangChain vs Manual**, un repaso comparativo de todo el módulo (solo Resolution, sin Starter). Ver ficha al final de esta sección.
 
-**Carpeta**: `M3L2/E00_chat_basico_prompt_template`
+### E00 - LLM Wrapper
 
-**Objetivo**: Primer encuentro con LangChain. Construye un chat simple usando PromptTemplate.
+**Carpeta**: `M3L2/E00_llm_wrapper`
+
+**Objetivo**: Envuelve un modelo como una herramienta reutilizable.
 
 **Qué aprenderás**:
-- LangChain basics
-- PromptTemplate
-- LLM calls
-- Simple conversation flow
+- LangChain LLM interface
+- Custom wrappers
+- Model abstraction
+- Reusable components
 
 **Notebooks**: 
-- [M3L2_E00_Starter.ipynb](M3L2/E00_chat_basico_prompt_template/M3L2_E00_Starter.ipynb)
-- [M3L2_E00_Resolution.ipynb](M3L2/E00_chat_basico_prompt_template/M3L2_E00_Resolution.ipynb)
+- [M3L2_E00_Starter.ipynb](M3L2/E00_llm_wrapper/M3L2_E00_Starter.ipynb)
+- [M3L2_E00_Resolution.ipynb](M3L2/E00_llm_wrapper/M3L2_E00_Resolution.ipynb)
 
 ---
 
-### E01 - LCEL y Cadenas en LangChain
+### E01 - PromptTemplate
 
-**Carpeta**: `M3L2/E01_lcel_cadenas_langchain`
+**Carpeta**: `M3L2/E01_prompt_template`
 
-**Objetivo**: Aprende LCEL (LangChain Expression Language) para componer cadenas.
+**Objetivo**: Del string manual al `ChatPromptTemplate`: variables explícitas, inspección y reutilización.
 
 **Qué aprenderás**:
-- LCEL syntax
-- Pipe operator (|)
-- Chain composition
-- Runnable interfaces
+- Variables dinámicas
+- Few-shot examples
+- Template formatting
+- Prompt engineering
 
 **Notebooks**: 
-- [M3L2_E01_Starter.ipynb](M3L2/E01_lcel_cadenas_langchain/M3L2_E01_Starter.ipynb)
-- [M3L2_E01_Resolution.ipynb](M3L2/E01_lcel_cadenas_langchain/M3L2_E01_Resolution.ipynb)
+- [M3L2_E01_Starter.ipynb](M3L2/E01_prompt_template/M3L2_E01_Starter.ipynb)
+- [M3L2_E01_Resolution.ipynb](M3L2/E01_prompt_template/M3L2_E01_Resolution.ipynb)
 
 ---
 
-### E02 - Chat con Memoria en LangChain
+### E02 - Output Parser
 
-**Carpeta**: `M3L2/E02_chat_con_memoria_langchain`
+**Carpeta**: `M3L2/E02_output_parser`
+
+**Objetivo**: Parsea y estructura outputs del LLM.
+
+**Qué aprenderás**:
+- Output parsing
+- JSON structuring
+- Error recovery
+- Custom parsers
+
+**Notebooks**: 
+- [M3L2_E02_Starter.ipynb](M3L2/E02_output_parser/M3L2_E02_Starter.ipynb)
+- [M3L2_E02_Resolution.ipynb](M3L2/E02_output_parser/M3L2_E02_Resolution.ipynb)
+
+---
+
+### E03 - LCEL Chain
+
+**Carpeta**: `M3L2/E03_lcel_chain`
+
+**Objetivo**: Componer `prompt | llm | parser` con el operador `|` de LCEL.
+
+**Qué aprenderás**:
+- Advanced LCEL patterns
+- Branching and routing
+- Conditional chains
+- Parallel processing
+
+**Notebooks**: 
+- [M3L2_E03_Starter.ipynb](M3L2/E03_lcel_chain/M3L2_E03_Starter.ipynb)
+- [M3L2_E03_Resolution.ipynb](M3L2/E03_lcel_chain/M3L2_E03_Resolution.ipynb)
+
+---
+
+### E04 - Chat con Memoria en LangChain
+
+**Carpeta**: `M3L2/E04_chat_con_memoria_langchain`
 
 **Objetivo**: Implementa un chat que recuerda la conversación.
 
@@ -425,14 +460,14 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - Context management
 
 **Notebooks**: 
-- [M3L2_E02_Starter.ipynb](M3L2/E02_chat_con_memoria_langchain/M3L2_E02_Starter.ipynb)
-- [M3L2_E02_Resolution.ipynb](M3L2/E02_chat_con_memoria_langchain/M3L2_E02_Resolution.ipynb)
+- [M3L2_E04_Starter.ipynb](M3L2/E04_chat_con_memoria_langchain/M3L2_E04_Starter.ipynb)
+- [M3L2_E04_Resolution.ipynb](M3L2/E04_chat_con_memoria_langchain/M3L2_E04_Resolution.ipynb)
 
 ---
 
-### E03 - Tools con LangChain y API
+### E05 - Tools con LangChain y API
 
-**Carpeta**: `M3L2/E03_tools_langchain_api_dolar`
+**Carpeta**: `M3L2/E05_tools_langchain_api_dolar`
 
 **Objetivo**: Integra tools externas (APIs) con LangChain.
 
@@ -443,44 +478,8 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - Tool validation
 
 **Notebooks**: 
-- [M3L2_E03_Starter.ipynb](M3L2/E03_tools_langchain_api_dolar/M3L2_E03_Starter.ipynb)
-- [M3L2_E03_Resolution.ipynb](M3L2/E03_tools_langchain_api_dolar/M3L2_E03_Resolution.ipynb)
-
----
-
-### E04 - RAG Básico con LangChain
-
-**Carpeta**: `M3L2/E04_rag_basico_langchain`
-
-**Objetivo**: Implementa tu primer RAG (Retrieval-Augmented Generation).
-
-**Qué aprenderás**:
-- Vector stores
-- Document loaders
-- Retrievers
-- RAG pipeline básico
-
-**Notebooks**: 
-- [M3L2_E04_Starter.ipynb](M3L2/E04_rag_basico_langchain/M3L2_E04_Starter.ipynb)
-- [M3L2_E04_Resolution.ipynb](M3L2/E04_rag_basico_langchain/M3L2_E04_Resolution.ipynb)
-
----
-
-### E05 - RAG con Memoria
-
-**Carpeta**: `M3L2/E05_rag_chat_con_memoria`
-
-**Objetivo**: Combina RAG con memoria para conversaciones contextuales.
-
-**Qué aprenderás**:
-- RAG + memory
-- Context preservation
-- History management
-- Multi-turn RAG
-
-**Notebooks**: 
-- [M3L2_E05_Starter.ipynb](M3L2/E05_rag_chat_con_memoria/M3L2_E05_Starter.ipynb)
-- [M3L2_E05_Resolution.ipynb](M3L2/E05_rag_chat_con_memoria/M3L2_E05_Resolution.ipynb)
+- [M3L2_E05_Starter.ipynb](M3L2/E05_tools_langchain_api_dolar/M3L2_E05_Starter.ipynb)
+- [M3L2_E05_Resolution.ipynb](M3L2/E05_tools_langchain_api_dolar/M3L2_E05_Resolution.ipynb)
 
 ---
 
@@ -502,99 +501,9 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 
 ---
 
-### E07 - PromptTemplate Avanzado
+### E07 - Embeddings
 
-**Carpeta**: `M3L2/E07_prompt_template`
-
-**Objetivo**: Técnicas avanzadas de PromptTemplate.
-
-**Qué aprenderás**:
-- Variables dinámicas
-- Few-shot examples
-- Template formatting
-- Prompt engineering
-
-**Notebooks**: 
-- [M3L2_E07_Starter.ipynb](M3L2/E07_prompt_template/M3L2_E07_Starter.ipynb)
-- [M3L2_E07_Resolution.ipynb](M3L2/E07_prompt_template/M3L2_E07_Resolution.ipynb)
-
----
-
-### E08 - LCEL Chain Avanzado
-
-**Carpeta**: `M3L2/E08_lcel_chain`
-
-**Objetivo**: Cadenas complejas con LCEL.
-
-**Qué aprenderás**:
-- Advanced LCEL patterns
-- Branching and routing
-- Conditional chains
-- Parallel processing
-
-**Notebooks**: 
-- [M3L2_E08_Starter.ipynb](M3L2/E08_lcel_chain/M3L2_E08_Starter.ipynb)
-- [M3L2_E08_Resolution.ipynb](M3L2/E08_lcel_chain/M3L2_E08_Resolution.ipynb)
-
----
-
-### E09 - RAG Mini
-
-**Carpeta**: `M3L2/E09_rag_mini`
-
-**Objetivo**: RAG minimalista y eficiente.
-
-**Qué aprenderás**:
-- Minimalist RAG design
-- Essential components only
-- Performance optimization
-- Simple but effective
-
-**Notebooks**: 
-- [M3L2_E09_Starter.ipynb](M3L2/E09_rag_mini/M3L2_E09_Starter.ipynb)
-- [M3L2_E09_Resolution.ipynb](M3L2/E09_rag_mini/M3L2_E09_Resolution.ipynb)
-
----
-
-### E10 - LLM Wrapper
-
-**Carpeta**: `M3L2/E10_llm_wrapper`
-
-**Objetivo**: Envuelve un modelo como una herramienta reutilizable.
-
-**Qué aprenderás**:
-- LangChain LLM interface
-- Custom wrappers
-- Model abstraction
-- Reusable components
-
-**Notebooks**: 
-- [M3L2_E10_Starter.ipynb](M3L2/E10_llm_wrapper/M3L2_E10_Starter.ipynb)
-- [M3L2_E10_Resolution.ipynb](M3L2/E10_llm_wrapper/M3L2_E10_Resolution.ipynb)
-
----
-
-### E11 - Output Parser
-
-**Carpeta**: `M3L2/E11_output_parser`
-
-**Objetivo**: Parsea y estructura outputs del LLM.
-
-**Qué aprenderás**:
-- Output parsing
-- JSON structuring
-- Error recovery
-- Custom parsers
-
-**Notebooks**: 
-- [M3L2_E11_Starter.ipynb](M3L2/E11_output_parser/M3L2_E11_Starter.ipynb)
-- [M3L2_E11_Resolution.ipynb](M3L2/E11_output_parser/M3L2_E11_Resolution.ipynb)
-
----
-
-### E12 - Embeddings
-
-**Carpeta**: `M3L2/E12_embeddings`
+**Carpeta**: `M3L2/E07_embeddings`
 
 **Objetivo**: Trabajar con embeddings para representación semántica.
 
@@ -605,14 +514,14 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - Embedding basics for RAG
 
 **Notebooks**: 
-- [M3L2_E12_Starter.ipynb](M3L2/E12_embeddings/M3L2_E12_Starter.ipynb)
-- [M3L2_E12_Resolution.ipynb](M3L2/E12_embeddings/M3L2_E12_Resolution.ipynb)
+- [M3L2_E07_Starter.ipynb](M3L2/E07_embeddings/M3L2_E07_Starter.ipynb)
+- [M3L2_E07_Resolution.ipynb](M3L2/E07_embeddings/M3L2_E07_Resolution.ipynb)
 
 ---
 
-### E13 - FAISS
+### E08 - FAISS
 
-**Carpeta**: `M3L2/E13_faiss`
+**Carpeta**: `M3L2/E08_faiss`
 
 **Objetivo**: Vector store con FAISS para búsqueda eficiente.
 
@@ -623,14 +532,14 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - Vector DB basics
 
 **Notebooks**: 
-- [M3L2_E13_Starter.ipynb](M3L2/E13_faiss/M3L2_E13_Starter.ipynb)
-- [M3L2_E13_Resolution.ipynb](M3L2/E13_faiss/M3L2_E13_Resolution.ipynb)
+- [M3L2_E08_Starter.ipynb](M3L2/E08_faiss/M3L2_E08_Starter.ipynb)
+- [M3L2_E08_Resolution.ipynb](M3L2/E08_faiss/M3L2_E08_Resolution.ipynb)
 
 ---
 
-### E14 - Retriever
+### E09 - Retriever
 
-**Carpeta**: `M3L2/E14_retriever`
+**Carpeta**: `M3L2/E09_retriever`
 
 **Objetivo**: Implementa retrievers personalizados.
 
@@ -641,32 +550,50 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - Retriever evaluation
 
 **Notebooks**: 
-- [M3L2_E14_Starter.ipynb](M3L2/E14_retriever/M3L2_E14_Starter.ipynb)
-- [M3L2_E14_Resolution.ipynb](M3L2/E14_retriever/M3L2_E14_Resolution.ipynb)
+- [M3L2_E09_Starter.ipynb](M3L2/E09_retriever/M3L2_E09_Starter.ipynb)
+- [M3L2_E09_Resolution.ipynb](M3L2/E09_retriever/M3L2_E09_Resolution.ipynb)
 
 ---
 
-### E15 - Refactor Code
+### E10 - RAG Mini
 
-**Carpeta**: `M3L2/E15_refactor_chaos`
+**Carpeta**: `M3L2/E10_rag_mini`
 
-**Objetivo**: Refactoriza código desordenado a una estructura limpia.
+**Objetivo**: RAG minimalista y eficiente.
 
 **Qué aprenderás**:
-- Code organization
-- Best practices
-- Modularity
-- Maintainability
+- Minimalist RAG design
+- Essential components only
+- Performance optimization
+- Simple but effective
 
 **Notebooks**: 
-- [M3L2_E15_Starter.ipynb](M3L2/E15_refactor_chaos/M3L2_E15_Starter.ipynb)
-- [M3L2_E15_Resolution.ipynb](M3L2/E15_refactor_chaos/M3L2_E15_Resolution.ipynb)
+- [M3L2_E10_Starter.ipynb](M3L2/E10_rag_mini/M3L2_E10_Starter.ipynb)
+- [M3L2_E10_Resolution.ipynb](M3L2/E10_rag_mini/M3L2_E10_Resolution.ipynb)
 
 ---
 
-### E16 - RAG desde Cero
+### E11 - RAG con Memoria
 
-**Carpeta**: `M3L2/E16_rag_desde_cero`
+**Carpeta**: `M3L2/E11_rag_chat_con_memoria`
+
+**Objetivo**: Combina RAG con memoria para conversaciones contextuales.
+
+**Qué aprenderás**:
+- RAG + memory
+- Context preservation
+- History management
+- Multi-turn RAG
+
+**Notebooks**: 
+- [M3L2_E11_Starter.ipynb](M3L2/E11_rag_chat_con_memoria/M3L2_E11_Starter.ipynb)
+- [M3L2_E11_Resolution.ipynb](M3L2/E11_rag_chat_con_memoria/M3L2_E11_Resolution.ipynb)
+
+---
+
+### E12 - RAG desde Cero
+
+**Carpeta**: `M3L2/E12_rag_desde_cero`
 
 **Objetivo**: Construye un RAG completo desde cero integrando todo lo aprendido.
 
@@ -677,8 +604,44 @@ Aprende a construir sistemas complejos con **LangChain**, implementa **RAG (Retr
 - Production considerations
 
 **Notebooks**: 
-- [M3L2_E16_Starter.ipynb](M3L2/E16_rag_desde_cero/M3L2_E16_Starter.ipynb)
-- [M3L2_E16_Resolution.ipynb](M3L2/E16_rag_desde_cero/M3L2_E16_Resolution.ipynb)
+- [M3L2_E12_Starter.ipynb](M3L2/E12_rag_desde_cero/M3L2_E12_Starter.ipynb)
+- [M3L2_E12_Resolution.ipynb](M3L2/E12_rag_desde_cero/M3L2_E12_Resolution.ipynb)
+
+---
+
+### E13 - Refactor Code
+
+**Carpeta**: `M3L2/E13_refactor_chaos`
+
+**Objetivo**: Refactoriza código desordenado a una estructura limpia (taller grupal de cierre).
+
+**Qué aprenderás**:
+- Code organization
+- Best practices
+- Modularity
+- Maintainability
+
+**Notebooks**: 
+- [M3L2_E13_Starter.ipynb](M3L2/E13_refactor_chaos/M3L2_E13_Starter.ipynb)
+- [M3L2_E13_Resolution.ipynb](M3L2/E13_refactor_chaos/M3L2_E13_Resolution.ipynb)
+
+---
+
+### E14 - LangChain vs Manual (extra)
+
+**Carpeta**: `M3L2/E14_langchain_vs_manual`
+
+**Objetivo**: Recorrido comparativo de todo M3L2 — cada concepto (modelo, prompt, parser, LCEL, memoria, tools, embeddings, vector store, retriever y el pipeline RAG completo) implementado dos veces, a mano con el SDK de `openai` y con LangChain, lado a lado.
+
+Es un notebook **extra**, solo Resolution (no tiene Starter con TODOs): sirve como repaso integrador antes de pasar a M3L3.
+
+**Qué aprenderás**:
+- Qué reemplaza exactamente cada componente de LangChain
+- Por qué esas abstracciones importan cuando el sistema crece
+- A debuggear entendiendo qué hay "debajo" de cada pieza del framework
+
+**Notebook**:
+- [M3L2_E14_Resolution.ipynb](M3L2/E14_langchain_vs_manual/M3L2_E14_Resolution.ipynb)
 
 ---
 
@@ -1190,18 +1153,18 @@ Aprende a instrumentar, tracear y mejorar agentes en producción. Desde MiniTrac
 │                                                                 │
 │  FUNDAMENTALES          CADENAS              RAG                │
 │  ──────────────         ────────────         ─────              │
-│  E00: Chat Basic        E07: Prompt      E04: RAG Basic         │
-│  E01: LCEL             E08: LCEL         E05: RAG Memory       │
-│  E02: Memory           E06: Refactor     E09: RAG Mini         │
-│                                          E16: RAG Full         │
+│  E00: LLM Wrapper       E01: Prompt      E07: Embeddings        │
+│  E02: Output Parser     E03: LCEL        E08: FAISS             │
+│  E04: Memory            E06: Manual→LC   E09: Retriever         │
+│  E05: Tools API                          E10: RAG Mini          │
+│                                          E11: RAG Memory         │
+│                                          E12: RAG Full           │
 │                                                                 │
 │       ▼─────────────────▼─────────────────▼                    │
 │                                                                 │
-│  COMPONENTES AVANZADOS                                         │
-│  ────────────────────────                                      │
-│  E10: LLM Wrapper  E12: Embeddings   E14: Retriever           │
-│  E11: Output Parser E13: FAISS       E15: Refactor            │
-│  E03: Tools API                                                │
+│  CIERRE                                                         │
+│  ────────                                                       │
+│  E13: Refactor (taller grupal de integracion)                  │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 
@@ -1391,8 +1354,8 @@ pip install faiss-gpu
 
 | Métrica | Valor |
 |---------|-------|
-| **Ejercicios Totales** | 49 |
-| **Notebooks** | 98 (49 Starter + 49 Resolution) |
+| **Ejercicios Totales** | 46 |
+| **Notebooks** | 92 (46 Starter + 46 Resolution) |
 | **Tiempo Total Estimado** | ~32-38 horas |
 | **Tópicos Cubiertos** | 40+ |
 | **Líneas de Código** | 9,000+ |
