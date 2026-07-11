@@ -9,12 +9,14 @@ Pasar de "llamar al modelo con requests sueltos" (estilo M3L1)
 a construir pipelines LangChain modulares, reemplazables y con RAG.
 ```
 
-La numeración de las carpetas (`E00` a `E13`) **ya sigue el orden de dictado recomendado**. `E14` es un ejercicio extra fuera de esa secuencia.
+La numeración de las carpetas (`E00` a `E13`) **ya sigue el orden de dictado recomendado**. `E14` a `E19` son ejercicios extra fuera de esa secuencia.
 
-Cada carpeta trae dos notebooks (salvo E14):
+Cada carpeta trae dos notebooks (salvo E14 a E19):
 
 - `*_Starter.ipynb` — versión con TODOs para completar.
 - `*_Resolution.ipynb` — versión resuelta, con teoría y explicación bloque por bloque.
+
+`E15` a `E19` son **solo Resolution** (sin Starter): son material complementario para profundizar temas puntuales (API moderna de LangChain, modelos open source, persistencia SQL, LangGraph) que no forman parte del recorrido guiado E00-E13.
 
 ---
 
@@ -37,6 +39,11 @@ Cada carpeta trae dos notebooks (salvo E14):
 | E12 | `E12_rag_desde_cero` | RAG completo, capstone integrador | todo lo anterior |
 | E13 | `E13_refactor_chaos` | Taller grupal: refactorizar un script caótico | todo el módulo |
 | E14 | `E14_langchain_vs_manual` | Extra: repaso comparativo de todo el módulo | todo el módulo |
+| E15 | `E15_model_wrapper_agent_v1` | Extra: Model, Wrapper y Agent con la API moderna (`init_chat_model`, `create_agent`) | E00, E06 |
+| E16 | `E16_modelos_open_source_arquitectura` | Extra: arquitectura de modelos open source (motor, servidor, wrapper) | E00, E17 |
+| E17 | `E17_lm_studio_conexion_local` | Extra: conectar LangChain a un servidor local, model factory desacoplado | E00, E16 |
+| E18 | `E18_persistencia_sql_chat` | Extra: persistencia de conversaciones con SQL (`SQLChatMessageHistory`) | E04 |
+| E19 | `E19_langgraph_checkpointer` | Extra: introducción a LangGraph (estado, `thread_id`, checkpointer) | E04, E06, E18 |
 
 ---
 
@@ -244,6 +251,76 @@ Cada carpeta trae dos notebooks (salvo E14):
 
 ---
 
+## E15 - Model, Wrapper y Agent (API moderna)
+
+**Carpeta**: `E15_model_wrapper_agent_v1` (solo Resolution)
+
+**Qué vemos**:
+- Las cinco piezas que no hay que confundir: modelo real, wrapper, Model de LangChain, Tool y Agent.
+- `init_chat_model("openai:gpt-4o-mini")` como alternativa a instanciar `ChatOpenAI` a mano — y por qué el wrapper **no desaparece**, solo se oculta.
+- `bind_tools()` + `tool_calls` vs `create_agent()`: por qué "darle tools a un modelo" no es lo mismo que "tener un agente".
+- Tabla de errores conceptuales frecuentes (`"ChatOpenAI es GPT"`, `"el agent reemplaza al model"`, etc.).
+
+**Por qué importa**: actualiza E00 y E06 con la sintaxis moderna de LangChain (`init_chat_model`, `create_agent`) sin reemplazar esos ejercicios — mismo concepto, forma de escribirlo más reciente.
+
+---
+
+## E16 - Arquitectura de modelos open source
+
+**Carpeta**: `E16_modelos_open_source_arquitectura` (solo Resolution)
+
+**Qué vemos**:
+- Modelo vs motor de inferencia vs servidor de inferencia vs wrapper: cuatro capas que un proveedor comercial resuelve por vos y que con un modelo open source hay que decidir.
+- Modelo base vs instruct, open source vs open weight.
+- Tabla comparativa de siete formas de correr un modelo open source: LM Studio, Ollama, Hugging Face Transformers, llama.cpp, vLLM, proveedor externo, wrapper propio.
+- Esqueleto de un `BaseChatModel` personalizado, para cuando ninguna integración estándar alcanza.
+
+**Por qué importa**: es la base conceptual de E17 — antes de conectar código a un servidor local, hay que tener claro qué pieza es cuál. Notebook 100% teórico (sin API key ni servidor requerido).
+
+---
+
+## E17 - Conexión a un servidor local (LM Studio)
+
+**Carpeta**: `E17_lm_studio_conexion_local` (solo Resolution)
+
+**Qué vemos**:
+- Apuntar `ChatOpenAI` a `http://localhost:1234/v1` (LM Studio) en vez de a la API de OpenAI — mismo cliente, distinto `base_url`.
+- Un `model_factory` que decide el proveedor (`openai`, `lmstudio`, `ollama`, `vllm`) según una variable de entorno, sin tocar el resto del pipeline.
+- Qué puede necesitar ajustes al cambiar de modelo (system prompt, temperatura, tools) — "misma interfaz != mismo comportamiento".
+- Streaming con `.stream()`, igual sin importar qué wrapper esté detrás.
+
+**Por qué importa**: lleva la teoría de E16 a código real. Las celdas que requieren LM Studio corriendo son opcionales y se saltean solas si no hay servidor local — el resto del notebook funciona con la `OPENAI_API_KEY` de siempre.
+
+---
+
+## E18 - Persistencia de conversaciones con SQL
+
+**Carpeta**: `E18_persistencia_sql_chat` (solo Resolution)
+
+**Qué vemos**:
+- Por qué `InMemoryChatMessageHistory` (E04) se pierde al reiniciar el proceso, y cómo `SQLChatMessageHistory` resuelve eso con SQLite (mismo patrón aplicable a PostgreSQL en producción).
+- Diseño correcto de `user_id` / `conversation_id` / `session_id` y el error frecuente de igualar `session_id` a `user_id`.
+- Aislamiento entre conversaciones, inspección y limpieza del historial persistido.
+- Diseño de tablas de producción (`users`, `conversations`, `messages`) separadas de las tablas internas del framework, y cómo exponer todo con FastAPI.
+
+**Por qué importa**: es la evolución directa de E04 — mismo `RunnableWithMessageHistory`, misma firma, la única pieza que cambia es de dónde se lee/escribe el historial.
+
+---
+
+## E19 - Introducción a LangGraph (checkpointer)
+
+**Carpeta**: `E19_langgraph_checkpointer` (solo Resolution)
+
+**Qué vemos**:
+- Un `StateGraph` mínimo con `MessagesState`, y por qué sin checkpointer tampoco recuerda nada entre invocaciones.
+- `thread_id` como el equivalente de `session_id`, y `checkpointer` (memoria de corto plazo) vs `Store` (memoria de largo plazo, entre threads).
+- `InMemorySaver` (sin infraestructura externa) demostrando aislamiento real entre threads, con mención de `SqliteSaver` y `PostgresSaver` para desarrollo y producción.
+- Tabla de decisión: cuándo alcanza `RunnableWithMessageHistory` (E04, E18) y cuándo conviene LangGraph.
+
+**Por qué importa**: primer contacto del módulo con LangGraph, el runtime que reemplaza a `RunnableWithMessageHistory` cuando aparecen agentes, ciclos o múltiples nodos.
+
+---
+
 ## Orden de dictado recomendado (clase de 45 min)
 
 ```txt
@@ -255,3 +332,10 @@ E00 (LLM Wrapper) -> E01 (PromptTemplate) -> E02 (Output Parser) -> E03 (LCEL)
 ```
 
 `E14` queda como material de repaso, fuera de esta secuencia — se puede asignar como autoestudio antes de pasar a M3L3.
+
+`E15` a `E19` son material complementario opcional, pensado para autoestudio o para quienes quieran profundizar puntos específicos sin extender la clase principal:
+
+```txt
+E15 (Model/Wrapper/Agent v1) -> E16 (Arquitectura open source) -> E17 (Conexion LM Studio)
+   -> E18 (Persistencia SQL) -> E19 (LangGraph checkpointer)
+```
