@@ -1,34 +1,34 @@
-# Guia Lecture 4 - Langfuse desde cero hasta uso avanzado
+# Guía Lecture 4 - Langfuse desde cero hasta uso avanzado
 
-Esta guia esta pensada para acompaniar la Lecture 4.
+Esta guía está pensada para acompañar la Lecture 4.
 
 Objetivo:
 
 ```txt
-Entender que agrega Langfuse a un sistema con LangChain y LangGraph.
+Entender qué agrega Langfuse a un sistema con LangChain y LangGraph.
 ```
 
-La guia cubre:
+La guía cubre:
 
-1. instalacion;
-2. configuracion de credenciales;
+1. instalación;
+2. configuración de credenciales;
 3. primer trace;
 4. uso con LangChain;
 5. uso con LangGraph;
 6. metadata, tags y run names;
 7. scores/evaluator;
-8. como leer la interfaz de Langfuse;
-9. que capturas agregar para clase.
+8. cómo leer la interfaz de Langfuse;
+9. qué capturas agregar para clase.
 
 No intenta construir un PI completo. Se enfoca solo en Langfuse.
 
 ---
 
-# 1. Que es Langfuse
+# 1. Qué es Langfuse
 
 Langfuse es una herramienta de observabilidad para aplicaciones con LLMs.
 
-En una app comun podemos imprimir logs:
+En una app común podemos imprimir logs:
 
 ```python
 print("respuesta:", respuesta)
@@ -36,16 +36,16 @@ print("respuesta:", respuesta)
 
 Pero en sistemas con LLM eso no alcanza, porque necesitamos ver:
 
-- que input entro;
-- que prompt se envio;
-- que modelo respondio;
-- cuanto tardo;
-- que nodo del grafo corrio;
-- que ruta tomo el router;
-- que respuesta genero;
+- qué input entró;
+- qué prompt se envió;
+- qué modelo respondió;
+- cuánto tardó;
+- qué nodo del grafo corrió;
+- qué ruta tomó el router;
+- qué respuesta generó;
 - si el evaluator dio buen o mal score.
 
-Langfuse organiza esa informacion en:
+Langfuse organiza esa información en:
 
 ```txt
 Trace
@@ -57,7 +57,7 @@ Trace
 
 ## 1.1 Trace
 
-Un trace representa una ejecucion completa.
+Un trace representa una ejecución completa.
 
 Ejemplo:
 
@@ -74,7 +74,7 @@ Un span representa un paso dentro del flujo.
 Ejemplos:
 
 - router;
-- agente tecnico;
+- agente técnico;
 - retrieval;
 - evaluator;
 - llamada a una herramienta.
@@ -91,7 +91,7 @@ Ejemplos:
 
 ## 1.4 Score
 
-Un score es una metrica asociada a un trace.
+Un score es una métrica asociada a un trace.
 
 Ejemplos:
 
@@ -103,7 +103,7 @@ Ejemplos:
 
 ---
 
-# 2. Instalacion
+# 2. Instalación
 
 En notebooks:
 
@@ -111,11 +111,11 @@ En notebooks:
 !pip install -q langfuse langchain langchain-openai langgraph
 ```
 
-Explicacion:
+Explicación:
 
 - `langfuse`: SDK para enviar traces.
 - `langchain`: base de prompts/chains/callbacks.
-- `langchain-openai`: integracion con OpenAI.
+- `langchain-openai`: integración con OpenAI.
 - `langgraph`: grafo de agentes.
 
 En proyecto local:
@@ -153,7 +153,7 @@ os.environ["OPENAI_API_KEY"] = getpass("OpenAI API Key: ")
 print("Credenciales configuradas.")
 ```
 
-Explicacion linea por linea:
+Explicación línea por línea:
 
 ```python
 import os
@@ -183,7 +183,7 @@ Guarda la secret key para autorizar escritura de traces.
 os.environ["LANGFUSE_BASE_URL"] = "https://cloud.langfuse.com"
 ```
 
-Define a que servidor enviar traces.
+Define a qué servidor enviar traces.
 
 ```python
 os.environ["OPENAI_API_KEY"] = ...
@@ -191,7 +191,7 @@ os.environ["OPENAI_API_KEY"] = ...
 
 OpenAI es necesario porque los ejemplos llaman al LLM.
 
-> Nota: en algunos proyectos tambien se usa `LANGFUSE_HOST`. En notebooks de clase usamos `LANGFUSE_BASE_URL`, y en proyectos Python puede usarse `LANGFUSE_HOST`. Ambos representan la URL del servidor.
+> Nota: en algunos proyectos también se usa `LANGFUSE_HOST`. En notebooks de clase usamos `LANGFUSE_BASE_URL`, y en proyectos Python puede usarse `LANGFUSE_HOST`. Ambos representan la URL del servidor.
 
 ---
 
@@ -208,7 +208,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "Sos un asistente breve y claro."),
-    ("human", "Explica en una frase que es un trace.")
+    ("human", "Explica en una frase qué es un trace.")
 ])
 
 chain = prompt | llm | StrOutputParser()
@@ -217,7 +217,7 @@ result = chain.invoke({})
 print(result)
 ```
 
-## Que hace cada parte
+## Qué hace cada parte
 
 ```python
 ChatPromptTemplate
@@ -243,7 +243,7 @@ prompt | llm | StrOutputParser()
 
 LCEL: salida del prompt entra al LLM, salida del LLM entra al parser.
 
-Problema: esto funciona, pero no queda registrado en ningun lugar visual.
+Problema: esto funciona, pero no queda registrado en ningún lugar visual.
 
 ---
 
@@ -278,7 +278,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "Sos un asistente breve y claro."),
-    ("human", "Explica en una frase que es un trace.")
+    ("human", "Explica en una frase qué es un trace.")
 ])
 
 chain = prompt | llm | StrOutputParser()
@@ -300,7 +300,7 @@ result = chain.invoke(
 print(result)
 ```
 
-## Que agregamos
+## Qué agregamos
 
 ```python
 from langfuse.langchain import CallbackHandler
@@ -330,19 +330,19 @@ Nombre legible del trace/run.
 "metadata": {...}
 ```
 
-Datos extra para filtrar despues en la interfaz.
+Datos extra para filtrar después en la interfaz.
 
 ---
 
 # 6. Espacio para captura: primer trace
 
-Agregar captura de pantalla aca:
+Agregar captura de pantalla acá:
 
 ```txt
 [PEGAR IMAGEN: listado de traces donde aparece primer_trace_langchain]
 ```
 
-Que mostrar:
+Qué mostrar:
 
 - columna de nombre;
 - timestamp;
@@ -350,21 +350,21 @@ Que mostrar:
 - latencia;
 - si aparece metadata.
 
-Explicacion para alumnos:
+Explicación para alumnos:
 
-> Este trace representa una ejecucion completa de la chain. Antes solo veíamos el print en la notebook. Ahora podemos abrir la ejecucion, inspeccionar input, output, modelo y duracion.
+> Este trace representa una ejecución completa de la chain. Antes solo veíamos el print en la notebook. Ahora podemos abrir la ejecución, inspeccionar input, output, modelo y duración.
 
 ---
 
-# 7. Langfuse con LangGraph basico
+# 7. Langfuse con LangGraph básico
 
-Ahora usamos el patron de M3L4 E08:
+Ahora usamos el patrón de M3L4 E08:
 
 ```txt
 START -> chatbot_node -> END
 ```
 
-Codigo completo:
+Código completo:
 
 ```python
 from typing import Annotated
@@ -399,7 +399,7 @@ graph = builder.compile()
 langfuse_handler = CallbackHandler()
 
 result = graph.invoke(
-    {"messages": [HumanMessage(content="Explica que es LangGraph en una frase.")]},
+    {"messages": [HumanMessage(content="Explica qué es LangGraph en una frase.")]},
     config={
         "callbacks": [langfuse_handler],
         "run_name": "m3l4_e08_langgraph_basico",
@@ -410,7 +410,7 @@ result = graph.invoke(
 print(result["messages"][-1].content)
 ```
 
-## Explicacion bloque por bloque
+## Explicación bloque por bloque
 
 ```python
 class State(TypedDict):
@@ -454,11 +454,11 @@ Declara flujo lineal.
 graph.invoke(..., config={"callbacks": [langfuse_handler]})
 ```
 
-Ejecuta el grafo y envia trace a Langfuse.
+Ejecuta el grafo y envía trace a Langfuse.
 
 ---
 
-# 8. Espacio para captura: trace de LangGraph basico
+# 8. Espacio para captura: trace de LangGraph básico
 
 Agregar captura:
 
@@ -466,7 +466,7 @@ Agregar captura:
 [PEGAR IMAGEN: trace con nodo chatbot y generation del modelo]
 ```
 
-Que senalar:
+Qué señalar:
 
 - trace completo;
 - observation/span del nodo;
@@ -478,13 +478,13 @@ Que senalar:
 
 # 9. Langfuse con router condicional
 
-Ahora usamos el patron de M3L4 E09:
+Ahora usamos el patrón de M3L4 E09:
 
 ```txt
 START -> router_node -> conditional_edges -> agente -> END
 ```
 
-Codigo:
+Código:
 
 ```python
 from typing_extensions import TypedDict
@@ -500,7 +500,7 @@ class AgentState(TypedDict):
 
 def route_query(query: str) -> str:
     q = query.lower()
-    if "vpn" in q or "login" in q or "contrasena" in q:
+    if "vpn" in q or "login" in q or "contraseña" in q:
         return "tech"
     if "vacaciones" in q or "licencia" in q:
         return "hr"
@@ -518,7 +518,7 @@ def tech_node(state: AgentState) -> dict:
 
 
 def hr_node(state: AgentState) -> dict:
-    return {"response": "HRAgent: revisa el portal de RR. HH. y solicita aprobacion."}
+    return {"response": "HRAgent: revisa el portal de RR. HH. y solicita aprobación."}
 
 
 def finance_node(state: AgentState) -> dict:
@@ -526,7 +526,7 @@ def finance_node(state: AgentState) -> dict:
 
 
 def general_node(state: AgentState) -> dict:
-    return {"response": "GeneralAgent: necesito mas informacion para ayudarte."}
+    return {"response": "GeneralAgent: necesito más información para ayudarte."}
 
 
 def route_to_node(state: AgentState) -> str:
@@ -581,7 +581,7 @@ result = graph.invoke(
 print(result)
 ```
 
-## Que tiene que verse en Langfuse
+## Qué tiene que verse en Langfuse
 
 Un trace con:
 
@@ -590,7 +590,7 @@ Un trace con:
 - ruta ejecutada;
 - output final.
 
-En este ejemplo los agentes no llaman LLM, por eso puede no haber generation en cada agente. Lo importante aca es ver la ruta.
+En este ejemplo los agentes no llaman LLM, por eso puede no haber generation en cada agente. Lo importante acá es ver la ruta.
 
 ---
 
@@ -602,7 +602,7 @@ Agregar captura:
 [PEGAR IMAGEN: trace donde se ve router_node y tech_node]
 ```
 
-Que marcar con flechas:
+Qué marcar con flechas:
 
 - `router_node`;
 - `intent=tech`;
@@ -654,7 +654,7 @@ trace de una query
   -> score clarity = 9
 ```
 
-Codigo:
+Código:
 
 ```python
 from langfuse import Langfuse
@@ -664,17 +664,17 @@ langfuse = Langfuse()
 langfuse.score_current_trace(
     name="routing_accuracy",
     value=1.0,
-    comment="El router eligio tech y era el intent esperado.",
+    comment="El router eligió tech y era el intent esperado.",
 )
 
 langfuse.score_current_trace(
     name="quality",
     value=0.85,
-    comment="La respuesta es util, pero podria incluir pasos mas concretos.",
+    comment="La respuesta es útil, pero podría incluir pasos más concretos.",
 )
 ```
 
-## Explicacion
+## Explicación
 
 ```python
 Langfuse()
@@ -692,27 +692,27 @@ Agrega score al trace activo.
 name="routing_accuracy"
 ```
 
-Nombre de la metrica.
+Nombre de la métrica.
 
 ```python
 value=1.0
 ```
 
-Valor numerico.
+Valor numérico.
 
 ```python
 comment="..."
 ```
 
-Explicacion humana del score.
+Explicación humana del score.
 
-> Nota: `score_current_trace` funciona cuando hay un trace activo. Si no hay contexto activo, se puede usar `create_score(trace_id=...)` con un `trace_id` explicito.
+> Nota: `score_current_trace` funciona cuando hay un trace activo. Si no hay contexto activo, se puede usar `create_score(trace_id=...)` con un `trace_id` explícito.
 
 ---
 
-# 13. Evaluator automatico + score
+# 13. Evaluator automático + score
 
-En un sistema mas avanzado, el evaluator puede ser una funcion o un LLM-as-judge.
+En un sistema más avanzado, el evaluator puede ser una función o un LLM-as-judge.
 
 Ejemplo simple:
 
@@ -743,29 +743,29 @@ for score_name, score_value in scores.items():
     langfuse.score_current_trace(
         name=score_name,
         value=score_value,
-        comment="Score automatico del evaluator local.",
+        comment="Score automático del evaluator local.",
     )
 ```
 
-Que ensena:
+Qué enseña:
 
 - primero ejecuto;
-- despues mido;
-- despues registro;
+- después mido;
+- después registro;
 - luego analizo en Langfuse.
 
 ---
 
-# 14. Interfaz de Langfuse: como usarla en clase
+# 14. Interfaz de Langfuse: cómo usarla en clase
 
 ## 14.1 Pantalla de traces
 
-Que mostrar:
+Qué mostrar:
 
 - lista de traces;
 - nombre del run;
 - timestamp;
-- usuario o sesion si existe;
+- usuario o sesión si existe;
 - latencia;
 - modelo;
 - costo si aparece;
@@ -777,13 +777,13 @@ Espacio para imagen:
 [PEGAR IMAGEN: tabla/lista de traces]
 ```
 
-Explicacion:
+Explicación:
 
-> Esta pantalla responde: que ejecuciones ocurrieron y cual quiero inspeccionar.
+> Esta pantalla responde: qué ejecuciones ocurrieron y cuál quiero inspeccionar.
 
 ## 14.2 Vista detalle de trace
 
-Que mostrar:
+Qué mostrar:
 
 - input;
 - output;
@@ -798,13 +798,13 @@ Espacio para imagen:
 [PEGAR IMAGEN: detalle de un trace]
 ```
 
-Explicacion:
+Explicación:
 
-> Esta pantalla responde: que paso dentro de una ejecucion.
+> Esta pantalla responde: qué pasó dentro de una ejecución.
 
 ## 14.3 Observations / spans
 
-Que mostrar:
+Qué mostrar:
 
 - router;
 - agente;
@@ -814,21 +814,21 @@ Que mostrar:
 Espacio para imagen:
 
 ```txt
-[PEGAR IMAGEN: arbol de observations/spans]
+[PEGAR IMAGEN: árbol de observations/spans]
 ```
 
-Explicacion:
+Explicación:
 
-> Cada span representa un paso del sistema. Si una query fue mal ruteada, aca vemos donde se tomo la decision.
+> Cada span representa un paso del sistema. Si una query fue mal ruteada, acá vemos dónde se tomó la decisión.
 
 ## 14.4 Generations
 
-Que mostrar:
+Qué mostrar:
 
 - prompt enviado;
 - modelo;
 - respuesta;
-- tokens si estan disponibles;
+- tokens si están disponibles;
 - latencia.
 
 Espacio para imagen:
@@ -837,18 +837,18 @@ Espacio para imagen:
 [PEGAR IMAGEN: generation con prompt y output]
 ```
 
-Explicacion:
+Explicación:
 
-> Una generation permite auditar que prompt vio el modelo y que respondio.
+> Una generation permite auditar qué prompt vio el modelo y qué respondió.
 
 ## 14.5 Scores
 
-Que mostrar:
+Qué mostrar:
 
 - nombre del score;
 - valor;
 - comentario;
-- relacion con el trace.
+- relación con el trace.
 
 Espacio para imagen:
 
@@ -856,13 +856,13 @@ Espacio para imagen:
 [PEGAR IMAGEN: panel de scores]
 ```
 
-Explicacion:
+Explicación:
 
 > Los scores transforman ejecuciones sueltas en datos medibles.
 
 ## 14.6 Filtros
 
-Filtros utiles:
+Filtros útiles:
 
 - por `run_name`;
 - por metadata `lecture`;
@@ -877,13 +877,13 @@ Espacio para imagen:
 [PEGAR IMAGEN: filtros por metadata o score]
 ```
 
-Explicacion:
+Explicación:
 
-> Los filtros permiten comparar versiones y encontrar fallas rapidamente.
+> Los filtros permiten comparar versiones y encontrar fallas rápidamente.
 
 ---
 
-# 15. Que exactamente agregamos de Langfuse al codigo
+# 15. Qué exactamente agregamos de Langfuse al código
 
 En un ejemplo sin Langfuse:
 
@@ -908,7 +908,7 @@ result = graph.invoke(
 )
 ```
 
-Eso es lo minimo.
+Eso es lo mínimo.
 
 Luego, para scores:
 
@@ -925,28 +925,28 @@ Eso es lo adicional avanzado.
 
 # 16. Errores comunes
 
-## No aparece ningun trace
+## No aparece ningún trace
 
 Revisar:
 
 - no pasaste `config={"callbacks": [handler]}`;
 - faltan keys;
 - host incorrecto;
-- estas mirando otro proyecto en Langfuse.
+- estás mirando otro proyecto en Langfuse.
 
 ## Aparece trace pero sin generation
 
 Posibles causas:
 
 - tus nodos no llaman LLM;
-- estas traceando solo funciones Python;
-- el callback no llego a la chain del LLM.
+- estás traceando solo funciones Python;
+- el callback no llegó a la chain del LLM.
 
 ## Aparece todo como un solo bloque
 
 Probable causa:
 
-- la app no esta separada en nodos/chains;
+- la app no está separada en nodos/chains;
 - falta estructura en LangGraph.
 
 ## No se registran scores
@@ -987,7 +987,7 @@ Durante la clase:
 
 # 18. Resumen final
 
-Langfuse no cambia la logica del agente.
+Langfuse no cambia la lógica del agente.
 
 Langfuse agrega visibilidad.
 
@@ -997,7 +997,7 @@ La diferencia clave es:
 Antes:
 ejecuto -> veo print
 
-Despues:
+Después:
 ejecuto -> veo trace -> veo spans -> veo generations -> veo scores -> puedo mejorar
 ```
 
@@ -1009,4 +1009,3 @@ Esto conecta directamente con Lecture 4:
 - evaluator;
 - scores;
 - mejora iterativa.
-

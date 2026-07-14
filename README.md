@@ -160,6 +160,13 @@ pip install langgraph langchain-openai  # o langchain-google-genai / langchain-a
 pip install langfuse
 ```
 
+**M3L4**
+```bash
+# E00-E07 y E12 corren con Python estándar y mocks determinísticos, sin API key.
+# E08-E11 SÍ requieren API key real de OpenAI y credenciales de Langfuse:
+pip install langgraph langchain-openai langfuse
+```
+
 ### 🌐 En Google Colab
 ```
 ✨ Las dependencias se instalan automáticamente
@@ -197,6 +204,8 @@ Cada carpeta de ejercicio contiene dos notebooks:
 - M3L3 E00-E06 y E13: Python estándar, sin API key (mocks determinísticos)
 - M3L3 E07-E12, E14-E20: **requieren** API key real (OpenAI, Gemini o Claude) + `langgraph`
 - M3L3 E19, E21, E22: además requieren credenciales de Langfuse (Public/Secret Key)
+- M3L4 E00-E07 y E12: Python estándar, sin API key (mocks determinísticos)
+- M3L4 E08-E11: **requieren** API key real de OpenAI + credenciales de Langfuse (Public/Secret Key)
 
 En Google Colab, los notebooks instalan dependencias automáticamente.
 
@@ -1112,6 +1121,8 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 Aprende a instrumentar, tracear y mejorar agentes en producción. Desde MiniTracer en Python puro hasta integración con Langfuse para observabilidad profesional.
 
 > 🎯 **Objetivo**: Domina la observabilidad de agentes: tracing, golden datasets, evaluadores, dashboards y ciclos de mejora iterativa
+
+> ⚠️ **Requisitos**: E00-E07 y E12 corren con Python estándar y mocks determinísticos (sin API key). **E08, E09, E10 y E11 requieren API key real** de OpenAI más credenciales de Langfuse (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`). Ver también la guía [`guia_Langfuse_Lecture4.md`](M3L4/guia_Langfuse_Lecture4.md) para instalación y configuración paso a paso.
 
 ## 🎯 Ejercicios M3L4
 
