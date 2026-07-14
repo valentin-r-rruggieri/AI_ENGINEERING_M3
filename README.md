@@ -77,7 +77,8 @@ extras/
     ├── E20 → Sistema de programación especializado (caso terminado)
     ├── E21 → E07 con Langfuse: traza básica
     ├── E22 → E08 con Langfuse: trazas en un router
-    └── E23 → Multiagente simple + RAG básico (bonus)
+    ├── E23 → Multiagente simple + RAG básico (bonus)
+    └── E24 → Multiagente HR + IT con orquestador híbrido, estilo PIM3 (bonus)
 │
 ├── M3L4/
     ├── E00 → Logs vs Tracing
@@ -708,6 +709,7 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 | 22 | **E21** | E07 con Langfuse: ver una traza básica | 20 min | 🟠 Intermedio |
 | 23 | **E22** | E08 con Langfuse: ver trazas en un router | 20 min | 🟠 Intermedio |
 | 24 | **E23** | Multiagente simple con orquestador + RAG básico (bonus) | 30 min | 🟢 Básico |
+| 25 | **E24** | Multiagente HR + IT con orquestador híbrido, estilo PIM3 (bonus) | 30 min | 🟠 Intermedio |
 
 ### E00 - El Problema del Agente Único
 
@@ -1113,6 +1115,22 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 
 **Notebook**:
 - [M3L3_E23_Multiagente_RAG_Simple.ipynb](M3L3/E23_multiagente_rag_simple/M3L3_E23_Multiagente_RAG_Simple.ipynb)
+
+---
+
+### E24 - Multiagente HR + IT con Orquestador Híbrido (estilo PIM3) (Bonus)
+
+**Carpeta**: `M3L3/E24_multiagente_hr_it_hibrido`
+
+**Objetivo**: Versión simplificada de la arquitectura del Proyecto Integrador M3 (`PIM3/src/agents.py` y `graph.py`): orquestador híbrido (keywords primero, LLM con salida estructurada como respaldo) con dos agentes especialistas, HR y Soporte IT.
+
+**Qué aprenderás**:
+- Por qué un router híbrido (reglas + LLM) es más robusto y barato que solo reglas o solo LLM
+- Modelar `trace_steps` como bitácora auditable por nodo, antesala de la observabilidad de M3L4
+- Comparar esta versión simplificada con la implementación real del PIM3 (2 dominios sin ChromaDB vs 3 dominios con ChromaDB)
+
+**Notebook**:
+- [M3L3_E24_Multiagente_HR_IT.ipynb](M3L3/E24_multiagente_hr_it_hibrido/M3L3_E24_Multiagente_HR_IT.ipynb)
 
 ---
 
@@ -1613,8 +1631,8 @@ pip install faiss-gpu
 
 | Métrica | Valor |
 |---------|-------|
-| **Ejercicios Totales** | 65 (M3L1: 8 · M3L2: 20 · M3L3: 24 · M3L4: 13) |
-| **Notebooks** | 118 (la mayoría en pares Starter+Resolution; algunos "casos terminados" y extras son un único notebook) |
+| **Ejercicios Totales** | 66 (M3L1: 8 · M3L2: 20 · M3L3: 25 · M3L4: 13) |
+| **Notebooks** | 119 (la mayoría en pares Starter+Resolution; algunos "casos terminados" y extras son un único notebook) |
 | **Tiempo Total Estimado** | ~32-38 horas |
 | **Tópicos Cubiertos** | 40+ |
 | **Líneas de Código** | 9,000+ |
