@@ -61,10 +61,23 @@ extras/
     ├── E04 → Consulta mixta y delegación paralela
     ├── E05 → Handoff con contexto
     ├── E06 → Protocolos de output estructurado
+    ├── E07 → Anatomía de un grafo LangGraph
+    ├── E08 → Router condicional con LangGraph
+    ├── E09 → Delegación paralela con LangGraph (Send)
     ├── E10 → Support Bot Baseline
     ├── E11 → Support Bot Multiagente
     ├── E12 → Orquestador con OpenAI Functions
-    └── E13 → Sistema completo con estado
+    ├── E13 → Sistema completo con estado
+    ├── E14 → Support Bot Multiagente con LangGraph
+    ├── E15 → Tool Calling con LangGraph
+    ├── E16 → Memoria persistente con LangGraph
+    ├── E17 → Vendedores especializados con RAG (caso terminado)
+    ├── E18 → Sistema SaaS multiagente (caso terminado)
+    ├── E19 → Sistema empresarial completo + evaluador (caso terminado)
+    ├── E20 → Sistema de programación especializado (caso terminado)
+    ├── E21 → E07 con Langfuse: traza básica
+    ├── E22 → E08 con Langfuse: trazas en un router
+    └── E23 → Multiagente simple + RAG básico (bonus)
 │
 ├── M3L4/
     ├── E00 → Logs vs Tracing
@@ -139,9 +152,12 @@ pip install python-dotenv
 
 **M3L3**
 ```bash
-# Los notebooks actuales corren con Python estándar y mocks determinísticos.
-# Opcional, si quieres reemplazar los mocks por LangChain/OpenAI real:
-pip install langchain langchain-community langchain-openai faiss-cpu python-dotenv
+# E00-E06 y E13 corren con Python estándar y mocks determinísticos, sin API key.
+# E07-E12 y E14-E20 SÍ requieren API key real (OpenAI, Gemini o Claude) y langgraph:
+pip install langgraph langchain-openai  # o langchain-google-genai / langchain-anthropic
+
+# E19, E21, E22 además usan Langfuse para trazabilidad (opcional en E19, requerido en E21/E22):
+pip install langfuse
 ```
 
 ### 🌐 En Google Colab
@@ -178,7 +194,9 @@ Cada carpeta de ejercicio contiene dos notebooks:
 - M3L1 E00: conexión a internet (DolarAPI)
 - M3L1 E11/E12: OpenAI API (opcional)
 - M3L2: LangChain, FAISS, embeddings
-- M3L3: Python estándar; LangChain/OpenAI opcional para llevar los mocks a producción
+- M3L3 E00-E06 y E13: Python estándar, sin API key (mocks determinísticos)
+- M3L3 E07-E12, E14-E20: **requieren** API key real (OpenAI, Gemini o Claude) + `langgraph`
+- M3L3 E19, E21, E22: además requieren credenciales de Langfuse (Public/Secret Key)
 
 En Google Colab, los notebooks instalan dependencias automáticamente.
 
@@ -647,9 +665,11 @@ Es un notebook **extra**, solo Resolution (no tiene Starter con TODOs): sirve co
 
 # 🧩 M3L3 - Sistemas Multiagente, Orquestación y Estado
 
-Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasificación de intención, agentes especialistas, orquestadores, handoffs, protocolos de salida y conversación con estado.
+Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasificación de intención, agentes especialistas, orquestadores, handoffs, protocolos de salida, conversación con estado, y su traslado a **LangGraph** con LLMs reales, casos de negocio completos y observabilidad con **Langfuse**.
 
-> 🎯 **Objetivo**: Domina la coordinación de agentes especializados y diseña arquitecturas multiagente auditables
+> 🎯 **Objetivo**: Domina la coordinación de agentes especializados en Python puro y en LangGraph, y diseña arquitecturas multiagente auditables
+
+> ⚠️ **Requisitos**: E00-E06 y E13 corren con Python estándar y mocks determinísticos (sin API key). **Desde E07 en adelante (17 de 24 carpetas) se requiere API key real** de OpenAI, Gemini o Claude, más `langgraph` (y `langfuse` en E19, E21, E22).
 
 ## 🎯 Ejercicios M3L3
 
@@ -662,10 +682,23 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 | 5 | **E04** | Consulta mixta y delegación paralela | 30 min | 🟠 Intermedio |
 | 6 | **E05** | Handoff con contexto | 30 min | 🟠 Intermedio |
 | 7 | **E06** | Protocolos de output estructurado | 30 min | 🟠 Intermedio |
-| 8 | **E10** | Support bot baseline | 35 min | 🟠 Intermedio |
-| 9 | **E11** | Support bot multiagente | 40 min | 🔴 Avanzado |
-| 10 | **E12** | Orquestador con OpenAI Functions | 35 min | 🔴 Avanzado |
-| 11 | **E13** | Sistema completo con estado | 45 min | 🔴 Avanzado |
+| 8 | **E07** | Anatomía de un grafo LangGraph | 25 min | 🟠 Intermedio |
+| 9 | **E08** | Router condicional con LangGraph | 25 min | 🟠 Intermedio |
+| 10 | **E09** | Delegación paralela con LangGraph (`Send`) | 30 min | 🟠 Intermedio |
+| 11 | **E10** | Support bot baseline | 35 min | 🟠 Intermedio |
+| 12 | **E11** | Support bot multiagente | 40 min | 🔴 Avanzado |
+| 13 | **E12** | Orquestador con OpenAI Functions | 35 min | 🔴 Avanzado |
+| 14 | **E13** | Sistema completo con estado | 45 min | 🔴 Avanzado |
+| 15 | **E14** | Support bot multiagente con LangGraph | 30 min | 🔴 Avanzado |
+| 16 | **E15** | Tool calling con LangGraph (`bind_tools`) | 30 min | 🔴 Avanzado |
+| 17 | **E16** | Memoria persistente con LangGraph (`MemorySaver`) | 35 min | 🔴 Avanzado |
+| 18 | **E17** | Vendedores especializados con RAG (caso terminado) | 25 min | 🔴 Avanzado |
+| 19 | **E18** | Sistema SaaS multiagente (caso terminado) | 30 min | 🔴 Avanzado |
+| 20 | **E19** | Sistema empresarial completo + evaluador automático (caso terminado) | 40 min | 🔴 Avanzado |
+| 21 | **E20** | Sistema de programación especializado (caso terminado) | 35 min | 🔴 Avanzado |
+| 22 | **E21** | E07 con Langfuse: ver una traza básica | 20 min | 🟠 Intermedio |
+| 23 | **E22** | E08 con Langfuse: ver trazas en un router | 20 min | 🟠 Intermedio |
+| 24 | **E23** | Multiagente simple con orquestador + RAG básico (bonus) | 30 min | 🟢 Básico |
 
 ### E00 - El Problema del Agente Único
 
@@ -793,6 +826,58 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 
 ---
 
+### E07 - Anatomía de un Grafo LangGraph
+
+**Carpeta**: `M3L3/E07_langgraph_anatomia`
+
+**Objetivo**: Identificar las cinco piezas de un grafo LangGraph (State, Nodes, Edges, compile, invoke) y construir el primer grafo con un LLM real. Requiere API key (OpenAI, Gemini o Claude).
+
+**Qué aprenderás**:
+- `TypedDict` como `State` compartido entre nodos
+- Nodos como funciones `fn(state) -> dict`
+- `add_edge`, `compile()` e `invoke()`
+- Equivalencia directa con lo aprendido en E00-E06 (Python puro)
+
+**Notebooks**:
+- [M3L3_E07_Starter.ipynb](M3L3/E07_langgraph_anatomia/M3L3_E07_Starter.ipynb)
+- [M3L3_E07_Resolution.ipynb](M3L3/E07_langgraph_anatomia/M3L3_E07_Resolution.ipynb)
+
+---
+
+### E08 - Router Condicional con LangGraph
+
+**Carpeta**: `M3L3/E08_langgraph_router`
+
+**Objetivo**: Reemplazar el `if/else` manual de E03 por `add_conditional_edges`, con un LLM real clasificando la intención.
+
+**Qué aprenderás**:
+- `add_conditional_edges` y el mapa de destinos válidos
+- El LLM como clasificador semántico (vs. keywords)
+- Comparación directa con el router de E01 + E03
+
+**Notebooks**:
+- [M3L3_E08_Starter.ipynb](M3L3/E08_langgraph_router/M3L3_E08_Starter.ipynb)
+- [M3L3_E08_Resolution.ipynb](M3L3/E08_langgraph_router/M3L3_E08_Resolution.ipynb)
+
+---
+
+### E09 - Delegación Paralela con LangGraph
+
+**Carpeta**: `M3L3/E09_langgraph_paralelo`
+
+**Objetivo**: Usar la `Send` API para hacer fan-out dinámico cuando una consulta pertenece a varios dominios a la vez (paralelo de E04).
+
+**Qué aprenderás**:
+- La `Send` API para ramas dinámicas
+- `Annotated[list, operator.add]` como acumulador de resultados paralelos
+- Patrón dispatcher (fan-out) + merge (fan-in)
+
+**Notebooks**:
+- [M3L3_E09_Starter.ipynb](M3L3/E09_langgraph_paralelo/M3L3_E09_Starter.ipynb)
+- [M3L3_E09_Resolution.ipynb](M3L3/E09_langgraph_paralelo/M3L3_E09_Resolution.ipynb)
+
+---
+
 ### E10 - Support Bot Baseline
 
 **Carpeta**: `M3L3/E10_support_bot_baseline`
@@ -862,6 +947,163 @@ Aprende a construir **sistemas multiagente** sobre lo aprendido en M3L2: clasifi
 **Notebooks**:
 - [M3L3_E13_Starter.ipynb](M3L3/E13_sistema_completo_con_estado/M3L3_E13_Starter.ipynb)
 - [M3L3_E13_Resolution.ipynb](M3L3/E13_sistema_completo_con_estado/M3L3_E13_Resolution.ipynb)
+
+---
+
+### E14 - Support Bot Multiagente con LangGraph
+
+**Carpeta**: `M3L3/E14_support_bot_langgraph`
+
+**Objetivo**: Trasladar la arquitectura de E11 (support bot multiagente en Python puro) a un `StateGraph` con LLM real (paralelo de E11).
+
+**Qué aprenderás**:
+- Mapear el `AgentResponse` TypedDict de E11 a campos del `State`
+- RAG + LLM dentro de nodos especialistas
+- `draw_mermaid()` para documentar el flujo automáticamente
+
+**Notebooks**:
+- [M3L3_E14_Starter.ipynb](M3L3/E14_support_bot_langgraph/M3L3_E14_Starter.ipynb)
+- [M3L3_E14_Resolution.ipynb](M3L3/E14_support_bot_langgraph/M3L3_E14_Resolution.ipynb)
+
+---
+
+### E15 - Tool Calling con LangGraph
+
+**Carpeta**: `M3L3/E15_langgraph_tool_calling`
+
+**Objetivo**: Reemplazar el scoring manual de tools de E12 por `bind_tools()`, la function-calling nativa de LangChain (paralelo de E12).
+
+**Qué aprenderás**:
+- El decorador `@tool` (docstring = descripción para el LLM)
+- `llm.bind_tools()` y `AIMessage.tool_calls`
+- El ciclo ReAct como grafo: `agent → tool_executor → END`
+
+**Notebooks**:
+- [M3L3_E15_Starter.ipynb](M3L3/E15_langgraph_tool_calling/M3L3_E15_Starter.ipynb)
+- [M3L3_E15_Resolution.ipynb](M3L3/E15_langgraph_tool_calling/M3L3_E15_Resolution.ipynb)
+
+---
+
+### E16 - Memoria Persistente con LangGraph
+
+**Carpeta**: `M3L3/E16_langgraph_memoria`
+
+**Objetivo**: Reemplazar el `SessionState` manual de E13 por `MemorySaver`, el checkpointer de LangGraph (paralelo de E13). Cierra la serie LangGraph con una tabla resumen E07-E16.
+
+**Qué aprenderás**:
+- `MemorySaver` y persistencia automática de estado por `thread_id`
+- Guardrails modelados como nodo explícito y auditable
+- LLM generando respuestas contextuales con historial real
+
+**Notebooks**:
+- [M3L3_E16_Starter.ipynb](M3L3/E16_langgraph_memoria/M3L3_E16_Starter.ipynb)
+- [M3L3_E16_Resolution.ipynb](M3L3/E16_langgraph_memoria/M3L3_E16_Resolution.ipynb)
+
+---
+
+### E17 - Vendedores Especializados con RAG
+
+**Carpeta**: `M3L3/E17_vendedores_rag_langgraph`
+
+**Objetivo**: Caso terminado (sin Starter/TODOs) — sistema de agentes de venta con RAG real sobre catálogos de software y hardware. Primero de la serie de "casos terminados" (E17-E20).
+
+**Qué aprenderás**:
+- Router LLM con salida JSON + agentes especialistas con RAG por dominio
+- Agente fallback para consultas fuera de catálogo
+
+**Notebook**:
+- [M3L3_E17_Vendedores_RAG.ipynb](M3L3/E17_vendedores_rag_langgraph/M3L3_E17_Vendedores_RAG.ipynb)
+
+---
+
+### E18 - Sistema SaaS Multiagente
+
+**Carpeta**: `M3L3/E18_empresa_saas_langgraph`
+
+**Objetivo**: Caso terminado — plataforma SaaS con 3 agentes departamentales (producto, soporte técnico, facturación), cada uno con su propia knowledge base.
+
+**Qué aprenderás**:
+- Patrón `_rag_agent()` reutilizable para evitar duplicar código entre agentes
+- Router LLM con JSON estructurado por departamento
+
+**Notebook**:
+- [M3L3_E18_Empresa_SaaS.ipynb](M3L3/E18_empresa_saas_langgraph/M3L3_E18_Empresa_SaaS.ipynb)
+
+---
+
+### E19 - Sistema Empresarial Completo con Evaluador Automático
+
+**Carpeta**: `M3L3/E19_empresa_completa_langgraph`
+
+**Objetivo**: Caso terminado — 4 departamentos corporativos (HR, IT, Finance, Legal) más un agente evaluador que audita automáticamente la calidad de cada respuesta, con integración **opcional** de Langfuse.
+
+**Qué aprenderás**:
+- Patrón **LLM-as-a-judge**: el mismo LLM audita la respuesta de otro agente en 4 dimensiones (relevancia, completitud, precisión, claridad)
+- `invoke_llm()` como punto único de entrada al modelo, para poder trazar todo con Langfuse sin reescribir cada agente
+- Router híbrido: LLM + respaldo determinístico por keywords
+
+**Notebook**:
+- [M3L3_E19_Empresa_Completa.ipynb](M3L3/E19_empresa_completa_langgraph/M3L3_E19_Empresa_Completa.ipynb)
+
+---
+
+### E20 - Sistema de Programación Especializado
+
+**Carpeta**: `M3L3/E20_programacion_langgraph`
+
+**Objetivo**: Caso terminado — asistente de programación con 5 agentes por tecnología (React, Angular, NestJS, Express, Python) y un router de **dos dimensiones** (área + tecnología). Cierra la serie de casos terminados con una tabla resumen E17-E20.
+
+**Qué aprenderás**:
+- Clasificación multidimensional: el router devuelve `{area, technology, target_agent, reason}`
+- `target_agent` en el State, para desacoplar el router de la lógica de routing del grafo
+
+**Notebook**:
+- [M3L3_E20_Programacion.ipynb](M3L3/E20_programacion_langgraph/M3L3_E20_Programacion.ipynb)
+
+---
+
+### E21 - E07 con Langfuse: Ver una Traza Básica
+
+**Carpeta**: `M3L3/E21_langfuse_anatomia`
+
+**Objetivo**: Retoma el grafo mínimo de E07 y agrega observabilidad con Langfuse. Requiere además credenciales de Langfuse (Public/Secret Key).
+
+**Qué aprenderás**:
+- Conectar LangChain con Langfuse vía `CallbackHandler`
+- Leer una traza: input, output, modelo, tokens y latencia de una `generation`
+
+**Notebook**:
+- [M3L3_E21_Langfuse_Anatomia.ipynb](M3L3/E21_langfuse_anatomia/M3L3_E21_Langfuse_Anatomia.ipynb)
+
+---
+
+### E22 - E08 con Langfuse: Ver Trazas en un Router
+
+**Carpeta**: `M3L3/E22_langfuse_router`
+
+**Objetivo**: Retoma el router condicional de E08 y observa en Langfuse la llamada que clasifica la intención — auditar una decisión, no solo una respuesta.
+
+**Qué aprenderás**:
+- Trazar múltiples clasificaciones y compararlas en Langfuse
+- Usar las trazas para debuggear prompts y decisiones de routing
+
+**Notebook**:
+- [M3L3_E22_Langfuse_Router.ipynb](M3L3/E22_langfuse_router/M3L3_E22_Langfuse_Router.ipynb)
+
+---
+
+### E23 - Multiagente Simple con Orquestador + RAG Básico (Bonus)
+
+**Carpeta**: `M3L3/E23_multiagente_rag_simple`
+
+**Objetivo**: Base introductoria y standalone de un sistema multiagente, deliberadamente simple — sin Langfuse, evaluadores ni configuración avanzada. Buen punto de entrada si E17-E22 resultan demasiado densos.
+
+**Qué aprenderás**:
+- El flujo completo en su forma mínima: orquestador → agente especialista → RAG por palabras compartidas → LLM
+- Separar retrieval (`retrieve_docs`) de generation para debuggear sin gastar tokens
+
+**Notebook**:
+- [M3L3_E23_Multiagente_RAG_Simple.ipynb](M3L3/E23_multiagente_rag_simple/M3L3_E23_Multiagente_RAG_Simple.ipynb)
 
 ---
 
@@ -1237,6 +1479,12 @@ Aprende a instrumentar, tracear y mejorar agentes en producción. Desde MiniTrac
 - ✅ **AgentResponse**: Protocolos de salida estructurada
 - ✅ **Tool Choice**: Orquestación con function calling/tools
 - ✅ **Session State**: Estado, historial, guardrails y fallback
+- ✅ **LangGraph**: `StateGraph`, `add_conditional_edges`, `Send` API (fan-out/fan-in)
+- ✅ **Tool Calling nativo**: `@tool` + `bind_tools()` (function calling con LangChain)
+- ✅ **Memoria persistente**: `MemorySaver`, `thread_id`
+- ✅ **Casos de negocio completos**: ventas, SaaS, empresa (HR/IT/Finance/Legal), programación
+- ✅ **LLM-as-a-judge**: evaluador automático que audita respuestas en múltiples dimensiones
+- ✅ **Langfuse**: trazabilidad y observabilidad de sistemas multiagente
 
 ### 📊 M3L4: Tracing y Observabilidad
 - ✅ **Logs vs Traces**: Por qué los logs no alcanzan para agentes
@@ -1354,8 +1602,8 @@ pip install faiss-gpu
 
 | Métrica | Valor |
 |---------|-------|
-| **Ejercicios Totales** | 46 |
-| **Notebooks** | 92 (46 Starter + 46 Resolution) |
+| **Ejercicios Totales** | 65 (M3L1: 8 · M3L2: 20 · M3L3: 24 · M3L4: 13) |
+| **Notebooks** | 118 (la mayoría en pares Starter+Resolution; algunos "casos terminados" y extras son un único notebook) |
 | **Tiempo Total Estimado** | ~32-38 horas |
 | **Tópicos Cubiertos** | 40+ |
 | **Líneas de Código** | 9,000+ |
